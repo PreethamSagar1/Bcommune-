@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Assessment</title>
+</head>
+<body>
+    <h1>Assessment</h1>
+    <form action="/view_assessment" method="POST">
+        {% for question in assessment %}
+            <div>
+                <p><strong>{{ loop.index }}. {{ question['question'] }}</strong></p>
+                {% for option in question['options'] %}
+                    <label>
+                        <input type="radio" name="{{ question['id'] }}" value="{{ option }}" required> {{ option }}
+                    </label>
+                {% endfor %}
+            </div>
+            <br>
+        {% endfor %}
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

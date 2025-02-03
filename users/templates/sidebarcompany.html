@@ -1,0 +1,52 @@
+{%load static%}
+
+<div class="sidebar">
+  
+    <a href="{% url 'company_profile' %}" style=" text-decoration: none;" ><h2>{{ user.company_name }}</h2></a>
+    <br><br>
+
+    <h4>
+      <a href="#" style="text-decoration: none; color: inherit;">Dashboard</a>
+    </h4>
+    <ul>
+        <li>
+          <a href="#" style="text-decoration: none; color: inherit;">Overview</a>
+        </li>
+        <li>
+          <a href="#" style="text-decoration: none; color: inherit;">Outsourcing & Vendor Analytics</a>
+        </li>
+        <li>
+          <a href="#" style="text-decoration: none; color: inherit;">Freelancer Analytics</a>
+        </li>
+        <li>
+          <a href="#" style="text-decoration: none; color: inherit;">Startup & Investment Insights</a>
+        </li>
+    </ul>
+    <br>
+
+    <h4>
+      <a href="#" style="text-decoration: none; color: inherit;">Resume Database</a>
+    </h4>
+    <br>
+
+    <h4>
+      <a href="{% url 'assessmentc' %}" style="text-decoration: none; color: inherit;">Assessments</a>
+    </h4>
+    <br>
+
+    <h4>
+      <a href="{% url 'myprojects' %}" style="text-decoration: none; color: inherit;">My Projects</a>
+    </h4>
+    
+    <h4>
+      <a href="{%url 'myinternships'%}" style="text-decoration: none; color: inherit;">My Internship</a>
+    </h4>
+
+    <h4>
+      <a href="{%url 'freelance'%}" style="text-decoration: none; color: inherit;">Freelance</a>
+    </h4>
+
+    <h4>
+      <a href="{% url 'faq' %}" style="text-decoration: none; color: inherit;">FAQ's</a>
+    </h4>
+</div>

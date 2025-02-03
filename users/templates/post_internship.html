@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create internship</title>
+</head>
+<body>
+
+    <style>
+
+body {
+    background-color: #1a2734;
+    color: #333;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+/* Form Container */
+.form-container {
+    max-width: 500px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="text"],
+textarea,
+select {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+button[type="submit"] {
+    background-color: #1a2734;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .form-container {
+        padding: 15px 20px;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+        font-size: 12px;
+    }
+
+    button[type="submit"] {
+        font-size: 14px;
+    }
+}
+
+    </style>
+
+    <div class="form-container">
+        <h2>Create a internship Posting</h2>
+        <form id="internshipPostForm" action="{% url 'post_internship' %}" method="POST">
+            {% csrf_token %}
+            <label for="internship-title">Internship Title:</label>
+            <input type="text" id="internship-title" name="job_title" required> <!-- Corrected name -->
+        
+            <label for="company-name">Company Name:</label>
+            <input type="text" id="company-name" name="company_name" required>
+        
+            <label for="internship-location">Internship Location:</label>
+            <input type="text" id="internship-location" name="job_location" required> <!-- Corrected name -->
+        
+            <label for="internship-type">Internship Type:</label>
+            <select id="internship-type" name="job_type" required> <!-- Corrected name -->
+                <option value="Remote">Remote</option>
+                <option value="On-site">On-site</option>
+                <option value="Hybrid">Hybrid</option>
+                
+            </select>
+
+            <label for="duration">Internship Duration:</label>
+            <input type="text" id="duration" name="duration" required>
+
+        
+            <label for="salary">Salary Range:</label>
+            <input type="text" id="salary" name="salary">
+        
+            <label for="description">Internship Description:</label>
+            <textarea id="description" name="job_description" required></textarea> <!-- Corrected name -->
+        
+            <button type="submit">Post Internship</button>
+        </form>
+        
+    </div>
+    <script>
+        document.getElementById('internshipPostForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('{% url "post_internship" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    // Redirect back to dashboard or refresh internship listings
+                    window.location.href = '{% url "company_dashboard" %}';
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while posting the internship.');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #1a2734;
+    color: #333;
+}
+
+header {
+    background-color: #1a2734;
+    padding: 15px 20px;
+    color: white;
+}
+
+.navbar {
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping for smaller screens */
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar .logo img {
+    height: 40px;
+    width: auto;
+}
+
+.navbar nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Adds spacing for links on smaller screens */
+}
+
+.navbar nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.navbar nav a:hover {
+    text-decoration: underline;
+}
+
+/* Main Container */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    margin: 20px auto;
+    background-color: #1a2734;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: white;
+    padding: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+/* Adjust spacing and layout for smaller screens */
+.sidebar ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar ul li {
+    margin: 5px 0;
+}
+
+/* Content Section */
+.content {
+    width: 100%;
+    padding: 20px;
+}
+
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.card {
+    width: 100%;
+    max-width: 300px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card h4 {
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #333;
+}
+
+.card p {
+    font-size: 14px;
+    color: #666;
+}
+
+.post-requirement {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.post-requirement a {
+    color: #1a2734;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.post-requirement a:hover {
+    text-decoration: underline;
+}
+
+
+@media (min-width: 900px) {
+    .navbar nav {
+        gap: 20px;
+    }
+
+    .card {
+        width: 30%;
+    }
+}
+
+@media (max-width: 599px) {
+    header {
+        padding: 10px;
+    }
+
+    .navbar .logo img {
+        height: 30px;
+    }
+
+    .navbar nav a {
+        font-size: 0.9rem;
+    }
+
+    .cards-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card {
+        width: 90%;
+    }
+}
+
+@media (max-width: 400px) {
+    header {
+        text-align: center;
+    }
+
+    .navbar nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navbar nav a {
+        margin: 5px 0;
+    }
+
+    .profile-pic {
+        width: 120px;
+        height: 120px;
+    }
+
+    .sidebar ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

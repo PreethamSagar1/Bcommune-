@@ -1,0 +1,227 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Home Page</title>
+
+    <!-- Set the favicon (logo) -->
+    <link rel="icon" href="{% static 'images/B.png' %}" type="image/png">
+
+    <link rel="stylesheet" href="{% static 'css/common.css'%}">
+    <style>
+
+        *{
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+        .idea-explore , .bid-project, .top-picks{
+            margin-bottom: 30px;
+        }
+
+
+        /* Section Headers */
+        h2 a.section-heading {
+            text-decoration: none;
+            color: #1a2734;
+            margin-top: 2%;
+            margin-bottom: 2%;
+        }
+
+        /* Card Containers */
+        .idea-cards, .bid-cards, .top-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* Common Card Styles */
+        .idea-card, .bid-card, .top-card {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .idea-card:hover, .bid-card:hover, .top-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Card Header */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #1a2734;
+            color: white;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .card-header img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        /* Card Body */
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-body img {
+            display: block;
+            margin: 0 auto 15px;
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .card-body p {
+            margin: 5px 0;
+            color: #555;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .idea-cards, .bid-cards, .top-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .card-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .card-header img {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+  {% include 'header2.html' %}
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        {% include 'sidebarcompany.html' %}
+
+        <!-- Main Content -->
+        <div class="content">
+            <h1>Welcome {{ user.company_name }},</h1>
+            <br>
+            <a href="{% url 'findnewtalent' %}">
+                <h2>Find new Talents</h2>
+            </a>
+            
+            <p style="margin-bottom: 20px;">Hire the best with Bcommune, pick top individuals...</p>
+
+            <!-- Explore Ideas -->
+            <section class="idea-explore">
+                <h2>
+                    <a href="{% url 'explore_all_ideas' %}" class="section-heading">
+                        Explore Ideas
+                        <i class="bi bi-arrow-right-circle" style="font-size: 1.5rem; margin-bottom: 20px;"></i>
+                    </a>
+                </h2>
+                <br>
+                <div class="idea-cards">
+                    {% for idea in ideas %}
+                        <div class="idea-card">
+                            <div class="card-header">
+                                <h3>{{ idea.title }}</h3>
+                                <img src="{% static 'images/B.png' %}" alt="Logo">
+                            </div>
+                            <div class="card-body">
+                                {% if idea.photo %}
+                                    <img src="{{ idea.photo.url }}" alt="{{ idea.title }}">
+                                {% endif %}
+                                <p>{{ idea.brief_description|truncatechars:100 }}</p>
+                                <div class="idea-meta">
+                                    <p><strong>Category:</strong> {{ idea.category }}</p>
+                                    <p><strong>Fund:</strong> ${{ idea.fund }}</p>
+                                </div>
+                                <div class="post-requirement">
+                                    <a href="{% url 'idea_detail' idea.id %}" style="font-size:medium;",class="post-button">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No ideas available to display.</p>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Bid for a Project -->
+            <section class="bid-project">
+                <h2>
+                    <a href="{% url 'myprojects' %}" class="section-heading">
+                        Bid for a Project
+                        <i class="bi bi-arrow-right-circle" style="font-size: 1.5rem;"></i>
+                    </a>
+                </h2>
+                <br>
+                <div class="bid-cards">
+                    {% for project in recent_projects %}
+                        <div class="bid-card">
+                            <div class="card-header">
+                                <h3>{{ project.title }}</h3>
+                                <img src="{% static 'images/B.png' %}" alt="Logo">
+                            </div>
+                            <div class="card-body">
+                                <p>{{ project.description|truncatechars:50 }}</p>
+                                <p><strong>Location:</strong> {{ project.location }}</p>
+                                <p><strong>Budget:</strong> ${{ project.budget }}</p>
+                                <p><strong>Posted:</strong> {{ project.created_at|timesince }} ago</p>
+                                <div class="post-requirement">
+                                    <a href="{% url 'explore_projects' %}?selected_project={{ project.id }}" style="font-size:medium;",class="post-button">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No projects available</p>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Top Picks -->
+            <section class="top-picks">
+                <h2>Bcommune top picks for you...</h2>
+                <div class="top-buttons">
+                    <button class="top-button">Ideas</button>
+                    <button class="top-button">Projects</button>
+                    <button class="top-button">Companies</button>
+                </div>
+                <br>
+                <div class="top-cards">
+                    <div class="top-card">
+                        <div class="card-header">
+                            <h3>Top Idea</h3>
+                            <img src="{% static 'images/B.png' %}" alt="Logo">
+                        </div>
+                        <div class="card-body">
+                            <p>Short description<br>Hyderabad</p>
+                            <p>1 week ago</p>
+                            <div class="bid-buttons">
+                                <button class="bid-button">BID</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,507 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Projects</title>
+    <link rel="stylesheet" href="{% static 'css/common.css'%}">
+    <style>
+        /* Main layout */
+        .projects-container {
+            display: flex;
+            gap: 24px;
+            padding: 24px;
+            background-color: #f3f2ef;
+            min-height: calc(100vh - 100px);
+        }
+
+        /* Projects list section */
+        .projects-list {
+            flex: 0 0 400px;
+            height: calc(100vh - 148px);
+            overflow-y: auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .project-card {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .project-card:hover {
+            background-color: #f5f5f5;
+        }
+
+        .project-card.active {
+            background-color: #e8f0fe;
+            border-left: 4px solid #0a66c2;
+        }
+
+        .project-card h3 {
+            margin: 0 0 8px 0;
+            color: #1a1a1a;
+            font-size: 18px;
+        }
+
+        .project-card p {
+            margin: 4px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .project-card .bid-logo {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 12px;
+        }
+
+        .project-card .bid-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        /* Project details section */
+        .project-details {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            height: calc(100vh - 148px);
+            overflow-y: auto;
+        }
+
+        .project-details h2 {
+            margin: 0 0 20px 0;
+            color: #1a1a1a;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 24px;
+        }
+
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .detail-section h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .detail-section p {
+            color: #1a1a1a;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .tags-section {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .tag {
+            background-color: #f3f2ef;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .bid-button {
+            background-color: #0a66c2;
+            color: white;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 24px;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .bid-button:hover {
+            background-color: #004182;
+        }
+
+        /* Loading state */
+        .loading {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .loading::after {
+            content: "";
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0a66c2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Back button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            text-decoration: none;
+            margin-bottom: 16px;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .back-button:hover {
+            background-color: #f5f5f5;
+            color: #0a66c2;
+        }
+
+        .no-projects {
+            padding: 24px;
+            text-align: center;
+            color: #666;
+        }
+
+        /* Alert messages */
+        .alert {
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background-color: #e6f4ea;
+            color: #1e4620;
+        }
+
+        .alert-error {
+            background-color: #fce8e6;
+            color: #c5221f;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .projects-container {
+                flex-direction: column;
+            }
+
+            .projects-list,
+            .project-details {
+                flex: none;
+                width: 100%;
+                height: auto;
+                max-height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'header2.html' %}
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        {% include 'sidebarcompany.html' %}
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Alert Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+                <script>
+                    // Auto-hide alerts after 5 seconds
+                    setTimeout(() => {
+                        const alerts = document.querySelectorAll('.alert');
+                        alerts.forEach(alert => alert.classList.remove('show'));
+                    }, 5000);
+                </script>
+            {% endif %}
+
+            <!-- Back Button -->
+            <a href="{% url 'myprojects' %}" class="back-button">
+                ← Back to My Projects
+            </a>
+
+            <!-- Projects Container -->
+            <div class="projects-container">
+                <!-- Projects List -->
+                <div class="projects-list">
+                    {% if projects %}
+                        {% for project in projects %}
+                            <div class="project-card {% if project.id|stringformat:'s' == selected_project_id %}active{% elif not selected_project_id and forloop.first %}active{% endif %}" data-project-id="{{ project.id }}">
+                                <div class="bid-logo">
+                                    <img src="{% static 'images/B.png' %}" alt="Project Logo">
+                                </div>
+                                <h3>{{ project.title }}</h3>
+                                <p>{{ project.description|truncatechars:100 }}</p>
+                                <p><strong>Budget:</strong> ${{ project.budget }}</p>
+                                <p><strong>Location:</strong> {{ project.location|default:"Not specified" }}</p>
+                                <p><strong>Posted:</strong> {{ project.created_at|timesince }} ago</p>
+                            </div>
+                            <hr>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-projects">No projects available from other companies at the moment.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Project Details -->
+                <div class="project-details">
+                    <div class="loading"></div>
+                    <div id="project-detail-content">
+                        {% if first_project %}
+                            <h2>{{ first_project.title }}</h2>
+                            <div class="detail-section">
+                                <h3>Description</h3>
+                                <p>{{ first_project.description }}</p>
+                            </div>
+                            <div class="detail-section">
+                                <h3>Project Details</h3>
+                                <p><strong>Type:</strong> {{ first_project.project_type }}</p>
+                                <p><strong>Industry:</strong> {{ first_project.industry }}</p>
+                                <p><strong>Budget:</strong> ${{ first_project.budget }}</p>
+                                <p><strong>Timeline:</strong> {{ first_project.timeline }}</p>
+                                <p><strong>Location:</strong> {{ first_project.location|default:"Not specified" }}</p>
+                            </div>
+                            <div class="detail-section">
+                                <h3>Required Expertise</h3>
+                                <p>{{ first_project.expertise_required }}</p>
+                            </div>
+                            <div class="detail-section">
+                                <h3>Payment Terms</h3>
+                                <p>{{ first_project.payment_terms }}</p>
+                            </div>
+                            <div class="detail-section">
+                                <h3>Requirements</h3>
+                                <div class="tags-section">
+                                    {% if first_project.nda_required %}
+                                        <span class="tag">NDA Required</span>
+                                    {% endif %}
+                                    {% if first_project.confidentiality_required %}
+                                        <span class="tag">Confidentiality Agreement</span>
+                                    {% endif %}
+                                    {% if first_project.ip_rights_required %}
+                                        <span class="tag">IP Rights Transfer</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if user.is_authenticated and user.user_type == 'company' and first_project.company != user %}
+                                <a href="{% url 'place_project_bid' first_project.id %}" class="btn btn-primary">Place Bid</a>
+                            {% endif %}
+                        {% else %}
+                            <p class="no-projects">Select a project to view details</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to include HTML
+        function includeHTML() {
+            const elements = document.querySelectorAll("[include-html]");
+            elements.forEach((element) => {
+                const file = element.getAttribute("include-html");
+                if (file) {
+                    fetch(file)
+                        .then((response) => {
+                            if (response.ok) return response.text();
+                            throw new Error("Page not found");
+                        })
+                        .then((data) => {
+                            element.innerHTML = data;
+                            element.removeAttribute("include-html");
+                            includeHTML();
+                        })
+                        .catch((error) => console.error(error));
+                }
+            });
+        }
+
+        // Function to format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Function to format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+        // Function to load project details
+        function loadProjectDetails(projectId) {
+            const detailsContainer = document.getElementById('project-detail-content');
+            const loadingElement = document.querySelector('.loading');
+            
+            // Show loading state
+            detailsContainer.style.display = 'none';
+            loadingElement.style.display = 'flex';
+
+            // Update active state of project cards
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.classList.remove('active');
+                if (card.dataset.projectId === projectId) {
+                    card.classList.add('active');
+                }
+            });
+
+            // Update URL without reloading the page
+            const url = new URL(window.location);
+            url.searchParams.set('selected_project', projectId);
+            window.history.pushState({}, '', url);
+
+            // Fetch project details
+            fetch(`?project_id=${projectId}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(project => {
+                // Update project details content
+                detailsContainer.innerHTML = `
+                    <h2>${project.title}</h2>
+                    <div class="detail-section">
+                        <h3>Description</h3>
+                        <p>${project.description}</p>
+                    </div>
+                    <div class="detail-section">
+                        <h3>Project Details</h3>
+                        <p><strong>Type:</strong> ${project.project_type}</p>
+                        <p><strong>Industry:</strong> ${project.industry}</p>
+                        <p><strong>Budget:</strong> ${formatCurrency(project.budget)}</p>
+                        <p><strong>Timeline:</strong> ${formatDate(project.timeline)}</p>
+                        <p><strong>Location:</strong> ${project.location || 'Not specified'}</p>
+                    </div>
+                    <div class="detail-section">
+                        <h3>Required Expertise</h3>
+                        <p>${project.expertise_required}</p>
+                    </div>
+                    <div class="detail-section">
+                        <h3>Payment Terms</h3>
+                        <p>${project.payment_terms}</p>
+                    </div>
+                    <div class="detail-section">
+                        <h3>Requirements</h3>
+                        <div class="tags-section">
+                            ${project.nda_required ? '<span class="tag">NDA Required</span>' : ''}
+                            ${project.confidentiality_required ? '<span class="tag">Confidentiality Agreement</span>' : ''}
+                            ${project.ip_rights_required ? '<span class="tag">IP Rights Transfer</span>' : ''}
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="location.href='/project/${projectId}/bid/'">Place Bid</button>
+                `;
+
+                // Hide loading state
+                loadingElement.style.display = 'none';
+                detailsContainer.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error loading project details:', error);
+                detailsContainer.innerHTML = '<p>Error loading project details. Please try again.</p>';
+                loadingElement.style.display = 'none';
+                detailsContainer.style.display = 'block';
+            });
+        }
+
+        // Function to handle scroll to active card
+        function scrollToActiveCard() {
+            const activeCard = document.querySelector('.project-card.active');
+            if (activeCard) {
+                activeCard.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Include HTML components
+            includeHTML();
+
+            // Add click event listeners to project cards
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    loadProjectDetails(this.dataset.projectId);
+                });
+            });
+
+            // Get selected project ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedProjectId = urlParams.get('selected_project');
+
+            // If there's a selected project, load its details
+            if (selectedProjectId) {
+                loadProjectDetails(selectedProjectId);
+                
+                // Wait for HTML inclusion to complete before scrolling
+                setTimeout(() => {
+                    scrollToActiveCard();
+                }, 1000);
+            }
+
+            // Handle browser back/forward buttons
+            window.addEventListener('popstate', function(event) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const projectId = urlParams.get('selected_project');
+                if (projectId) {
+                    loadProjectDetails(projectId);
+                } else {
+                    // If no project is selected, load the first project
+                    const firstCard = document.querySelector('.project-card');
+                    if (firstCard) {
+                        loadProjectDetails(firstCard.dataset.projectId);
+                    }
+                }
+            });
+
+            // Handle errors with project loading
+            window.addEventListener('error', function(event) {
+                const detailsContainer = document.getElementById('project-detail-content');
+                detailsContainer.innerHTML = '<p>An error occurred while loading the project. Please try again.</p>';
+            });
+        });
+
+        // Smooth scroll to the active card on page load
+        scrollToActiveCard();
+    </script>
+</body>

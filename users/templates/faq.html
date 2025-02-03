@@ -1,0 +1,187 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ'S</title>
+    <link rel="stylesheet" href="{% static 'css/common.css'%}">
+</head>
+<body>
+
+<style>
+    
+    .faq {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        .faq h3 {
+            margin-bottom: 10px;
+            color: #4f524f;
+            cursor: pointer;
+        }
+        .faq p, .faq ul {
+            display: none;
+            margin: 0;
+            padding-left: 20px;
+        }
+
+</style>
+
+{% include 'header2.html' %}
+    
+<!-- Main Container -->
+<div class="main-container">
+    <!-- Left Sidebar -->
+    {% include 'sidebarcompany.html' %}
+    <!-- Main Content -->
+    <div class="content">
+        <h1 style="margin-bottom: 2%; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif">Bcommune FAQs</h1>
+
+        <div class="faq">
+            <h3>Q1. What is Bcommune?</h3>
+            <p>Bcommune is a comprehensive platform designed to bridge the gap between students, professionals, companies, and investors. It focuses on hiring, collaboration, and innovation by offering features like job postings, project bidding, investor matchmaking, and more.</p>
+        </div>
+        <div class="faq">
+            <h3>Q2. How is Bcommune different from other platforms like LinkedIn or Naukri?</h3>
+            <ul>
+                <li>Tailored solutions for startups and businesses to find talent and co-founders.</li>
+                <li>Tools for students to showcase their skills and connect with potential employers.</li>
+                <li>Project bidding and outsourcing for companies.</li>
+                <li>A seamless interface for investors to explore innovative ideas and startups.</li>
+            </ul>
+        </div>
+        <div class="faq">
+            <h3>Q3. Who can use Bcommune?</h3>
+            <ul>
+                <li>Students seeking jobs, internships, or showcasing their talents.</li>
+                <li>Companies looking to hire talent, outsource projects, or collaborate.</li>
+                <li>Entrepreneurs searching for co-founders or pitching ideas to investors.</li>
+                <li>Investors exploring innovative startups and funding opportunities.</li>
+            </ul>
+        </div>
+
+        <div class="faq">
+            <h3>Q4. How can I create a profile?</h3>
+            <p>Creating a profile is simple. Sign up, add your personal and professional details, upload your resume, and start exploring opportunities.</p>
+        </div>
+        <div class="faq">
+            <h3>Q5. What does the "Screened Badge" mean?</h3>
+            <p>The "Screened Badge" indicates that a candidate has passed Bcommune's pre-screening tests, making them stand out to employers.</p>
+        </div>
+        <div class="faq">
+            <h3>Q6. Can I apply for jobs or internships directly?</h3>
+            <p>Yes, once your profile is set up, you can directly apply for jobs and internships posted by companies.</p>
+        </div>
+
+        <div class="faq">
+            <h3>Q7. How do companies benefit from Bcommune?</h3>
+            <ul>
+                <li>Post jobs and internships.</li>
+                <li>Conduct customized proctored assessments, including coding tests.</li>
+                <li>Bid on projects and outsource work efficiently.</li>
+                <li>Connect with startups and investors.</li>
+            </ul>
+        </div>
+        <div class="faq">
+            <h3>Q8. What details are required to post a job or project?</h3>
+            <ul>
+                <li>Job/Project title and description.</li>
+                <li>Skills required.</li>
+                <li>Timeline and budget (for projects).</li>
+                <li>Assessment details (if applicable).</li>
+            </ul>
+        </div>
+        <div class="faq">
+            <h3>Q9. How does the bidding process work?</h3>
+            <p>Companies can post projects, and interested parties can bid by submitting their proposals. The company can review bids, communicate with bidders, and award the project.</p>
+        </div>
+
+        <div class="faq">
+            <h3>Q10. How can I find a co-founder or skilled team member?</h3>
+            <p>Bcommune's "CORE" feature allows entrepreneurs to connect with potential co-founders and skilled professionals. You can review profiles, chat, and invite them to your team.</p>
+        </div>
+        <div class="faq">
+            <h3>Q11. Can I pitch my startup idea to investors?</h3>
+            <p>Yes, Bcommune provides an "Ideas & Investment" section where you can share your ideas and attract investors.</p>
+        </div>
+        <div class="faq">
+            <h3>Q12. Is crowdfunding available on Bcommune?</h3>
+            <p>Yes, entrepreneurs can use the crowdfunding feature to raise funds for their ventures.</p>
+        </div>
+
+        <div class="faq">
+            <h3>Q13. How can I explore startups for investment?</h3>
+            <p>Investors can browse the "Ideas & Investment" section, filter ideas based on industry or funding requirements, and connect directly with startups.</p>
+        </div>
+        <div class="faq">
+            <h3>Q14. Can I track the progress of startups I invest in?</h3>
+            <p>Yes, Bcommune provides updates and progress tracking for startups listed on the platform.</p>
+        </div>
+
+        <div class="faq">
+            <h3>Q15. Is Bcommune secure?</h3>
+            <p>Absolutely. We use advanced encryption and secure cloud services to protect user data and ensure safe transactions.</p>
+        </div>
+        <div class="faq">
+            <h3>Q16. Can I access Bcommune on mobile?</h3>
+            <p>Yes, Bcommune is accessible via its website and mobile application (coming soon).</p>
+        </div>
+        <div class="faq">
+            <h3>Q17. Does Bcommune support multiple languages?</h3>
+            <p>Currently, Bcommune is available in English. We plan to expand language support soon.</p>
+        </div>
+
+        <div class="faq">
+            <h3>Q18. Is Bcommune free to use?</h3>
+            <p>Basic features like profile creation and job applications are free. Advanced tools like project bidding, proctored tests, and investor matchmaking may require a subscription.</p>
+        </div>
+        <div class="faq">
+            <h3>Q19. What are the subscription plans?</h3>
+            <ul>
+                <li>Free Basic Plan.</li>
+                <li>Premium Plan for enhanced features.</li>
+                <li>Custom Enterprise Plans for companies.</li>
+            </ul>
+        </div>
+        <div class="faq">
+            <h3>Q20. Are there additional charges for proctored tests or project bidding?</h3>
+            <p>Yes, some features like proctored tests or submitting bids may have nominal charges.</p>
+        </div>
+
+        <div class="faq">
+            <h3>Q21. How can I contact Bcommune support?</h3>
+            <ul>
+                <li>Email: support@bcommune.com</li>
+                <li>Phone: +91-XXXX-XXXXXX</li>
+                <li>Chat support on our website.</li>
+            </ul>
+        </div>
+
+        <div class="faq">
+            <h3>Q22. What if I face technical issues?</h3>
+            <p>Our technical support team is available 24/7 to assist with any issues you face on the platform.</p>
+        </div>
+
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const faqHeadings = document.querySelectorAll(".faq h3");
+
+        faqHeadings.forEach(heading => {
+            heading.addEventListener("click", () => {
+                const content = heading.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

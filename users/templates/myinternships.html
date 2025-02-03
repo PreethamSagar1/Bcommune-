@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Internships</title>
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <style>
+
+        /* Internship Cards */
+        .internship-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .internship-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            background-color: #1a2734;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .company-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+
+        .job-info {
+            flex: 1;
+        }
+
+        .job-title {
+            font-size: 18px;
+            font-weight: bold;
+            color:white;
+            margin: 0;
+        }
+
+        .job-role {
+            font-size: 14px;
+            color: wheat;
+            margin: 5px 0 0;
+        }
+
+        .company {
+            font-size: 14px;
+            color: #95a5a6;
+        }
+
+        /* Card Body */
+        .card-body {
+            padding: 15px;
+        }
+
+        .location, .salary, .duration, .requirements {
+            font-size: 14px;
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+
+        .requirements h4 {
+            margin-bottom: 5px;
+        }
+
+        /* Posted Date */
+        .posted-date {
+            font-size: 12px;
+            color: #7f8c8d;
+            padding: 0 15px 15px;
+        }
+
+        /* Actions */
+        .internship-actions {
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #eee;
+            background-color: #f4f4f4;
+        }
+
+        .edit-button, .delete-button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .edit-button:hover {
+            background-color: #2980b9;
+        }
+
+        .delete-button {
+            background-color: #e74c3c;
+        }
+
+        .delete-button:hover {
+            background-color: #c0392b;
+        }
+
+        /* No Internships Message */
+        .no-internships {
+            font-size: 16px;
+            text-align: center;
+            color: #7f8c8d;
+            margin-top: 20px;
+        }
+
+    /* Hover Effect for Internship Cards */
+    .internship-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .internship-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    </style>
+</head>
+<body>
+    {% include 'header2.html' %}
+    <div class="main-container">
+        {% include 'sidebarcompany.html' %}
+        <div class="content">
+            <section class="internship-explore">
+                <div class="post-requirement">
+                    <a href="{% url 'post_internship' %}" class="post-button">+ Post an Internship</a>
+                </div>
+                <h2>My Internships</h2>
+                <br>
+                <div class="internship-cards">
+                    {% if internships %}
+                        {% for internship in internships %}
+                            <div class="internship-card">
+                                <div class="card-header">
+                                    <div class="job-info">
+                                        <h3 class="job-title">{{ internship.title }}</h3>
+                                        <p class="job-role">{{ internship.role }}</p>
+                                        <p class="company">{{ internship.company }}</p>
+                                    </div>
+                                    <img src="{{ internship.company_logo }}" alt="Company Logo" class="company-logo">
+                                </div>
+                                <div class="card-body">
+                                    <p class="location">📍 {{ internship.location }}</p>
+                                    <p class="salary">💰 {{ internship.salary }}</p>
+                                    <p class="duration">🕒 Duration: {{ internship.duration }}</p>
+                                    <div class="requirements">
+                                        <h4>Requirements:</h4>
+                                        <p>{{ internship.requirements }}</p>
+                                    </div>
+                                </div>
+                                <p class="posted-date">Posted: {{ internship.posted_date|date:"M d, Y" }}</p>
+                                <div class="internship-actions">
+                                    <a href="{% url 'edit_internship' internship.id %}" class="edit-button">Edit</a>
+                                    <button class="delete-button" onclick="confirmDelete('{{ internship.id }}')">Delete</button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-internships">No internships posted yet.</p>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </div>
+    <script>
+        function confirmDelete(internshipId) {
+            if (confirm("Are you sure you want to delete this internship?")) {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                fetch(`/delete_internship/${internshipId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Internship deleted successfully.');
+                        location.reload();
+                    } else {
+                        alert('Failed to delete the internship. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

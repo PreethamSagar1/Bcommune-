@@ -1,0 +1,95 @@
+/* Card Styling */
+.job-card {
+    flex: 0 0 300px; /* Maintain card width */
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    display: flex;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px; /* Add margin to prevent overlap */
+    height: 300px; /* Ensure consistent height for cards */
+}
+
+.job-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Header */
+.card-header {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #1a2734;
+    color: #fff;
+    height: 50%; /* Set height to 50% of the card */
+    box-sizing: border-box;
+}
+
+.card-header .header-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-header h5 {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.card-header h6 {
+    margin: 0;
+    font-weight: normal;
+    color: #ccc;
+}
+
+.header-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px; /* Change to rectangular shape */
+    object-fit: cover;
+    margin-left: 15px;
+}
+
+/* Card Body */
+.card-body {
+    padding: 15px;
+    flex: 1; /* Ensure body takes up the remaining height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 50%; /* Matches the header height */
+}
+
+.card-body p {
+    margin: 0;
+    color: #666;
+}
+
+/* Adjust Button Alignment */
+.job-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.edit-button,
+.delete-button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 20px;
+    background-color: #1a2734;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s;
+}
+
+.edit-button:hover,
+.delete-button:hover {
+    background-color: #333;
+}

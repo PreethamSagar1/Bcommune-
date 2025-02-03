@@ -1,0 +1,240 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Jobs</title>
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <style>
+        .container {
+            display: flex;
+            margin: 20px;
+            gap: 20px;
+        }
+
+        .left-container {
+            flex: 1;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .right-container {
+            flex: 2;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .job-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .job-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .job-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .job-company {
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .job-location {
+            color: #007bff;
+            font-size: 14px;
+        }
+
+        .job-details {
+            display: none;
+        }
+
+        .job-details.active {
+            display: block;
+        }
+
+        .detail-header {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-section {
+            margin-bottom: 15px;
+        }
+
+        .detail-section h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .job-card.selected {
+            background-color: #f0f7ff;
+            border-left: 4px solid #007bff;
+        }
+
+        .apply-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #28a745;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .apply-btn:hover {
+            background-color: #218838;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+
+    {% include 'header1.html' %}
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        {% include 'sidebar.html' %}
+
+
+        <!-- Main Content -->
+        <div class="content">    
+            <div class="container">
+                <!-- Left Container -->
+                <div class="left-container">
+                    {% for job in jobs %}
+                        <div class="job-card" onclick="showJobDetails('{{ job.id }}')">
+                            <div class="job-title">{{ job.title }}</div>
+                            <div class="job-company">{{ job.company }}</div>
+                            <div class="job-location">📍 {{ job.location }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Right Container -->
+                <div class="right-container">
+                    {% for job in jobs %}
+                        <div id="job-details-{{ job.id }}" class="job-details">
+                            <div class="detail-header">
+                                <h2>{{ job.title }}</h2>
+                                <p>{{ job.company }}</p>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <h3>Location</h3>
+                                <p>📍 {{ job.location }}</p>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3>Salary</h3>
+                                <p>💰 {{ job.salary }}</p>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3>Requirements</h3>
+                                <p>{{ job.requirements }}</p>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3>Required Skills</h3>
+                                <p>{{ job.required_skills }}</p>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3>Minimum Experience</h3>
+                                <p>{{ job.min_experience }} years</p>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3>Required Qualification</h3>
+                                <p>
+                                    {% if job.required_qualification == 'bachelor' %}
+                                        Bachelor's Degree
+                                    {% elif job.required_qualification == 'master' %}
+                                        Master's Degree
+                                    {% elif job.required_qualification == 'phd' %}
+                                        PhD
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3>Description</h3>
+                                <p>{{ job.description }}</p>
+                            </div>
+
+                            <div class="detail-section">
+                                <p>Posted on: {{ job.posted_date|date:"M d, Y" }}</p>
+                            </div>
+                            <div>
+                                <a href="{% url 'apply_job' job.id %}" class="apply-btn">
+                                    Apply Now
+                                </a>
+                            </div>
+                            
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showJobDetails(jobId) {
+            document.querySelectorAll('.job-details').forEach(detail => {
+                detail.classList.remove('active');
+            });
+    
+            const selectedJob = document.getElementById(`job-details-${jobId}`);
+            if (selectedJob) {
+                selectedJob.classList.add('active');
+            }
+    
+            document.querySelectorAll('.job-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            const selectedCard = document.querySelector(`.job-card[onclick*="${jobId}"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+        }
+    
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedJobId = urlParams.get('job_id');
+            
+            if (selectedJobId) {
+                showJobDetails(selectedJobId);
+            } else {
+                const firstJob = document.querySelector('.job-details');
+                if (firstJob) {
+                    firstJob.classList.add('active');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

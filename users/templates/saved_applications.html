@@ -1,0 +1,456 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Applications</title>
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <style>
+
+        h1,p{
+            color: white;
+        }
+        /* Existing styles */
+        .applications-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .application-card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .filter-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        select, input, button {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        #sortSelect {
+            margin-left: auto;
+        }
+
+        /* New email-related styles */
+        .email-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .quick-email-btn {
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .compose-email-btn {
+            background: #17a2b8;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 50px auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .email-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+
+        .preview-btn {
+            background: #6c757d;
+        }
+
+        .send-btn {
+            background: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="applications-container">
+        <h1>Saved Applications</h1>
+
+        <div class="filter-section">
+            <div>
+                <label for="categoryFilter">Filter by Category:</label>
+                <select id="categoryFilter">
+                    <option value="All">All</option>
+                    <option value="Shortlisted">Shortlisted</option>
+                    <option value="Reviewed">Reviewed</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            </div>
+            <div>
+                <label for="sortSelect">Sort by:</label>
+                <select id="sortSelect">
+                    <option value="saved_at">Date Saved</option>
+                    <option value="overall_match_score">Match Score</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="applicationsContainer">
+            {% for saved in saved_apps %}
+            <div class="application-card" data-category="{{ saved.category }}" data-id="{{ saved.id }}">
+                <h3>{{ saved.job_application.job.title }}</h3>
+                <p><strong>Applicant:</strong> {{ saved.job_application.name }}</p>
+                <p><strong>Email:</strong> {{ saved.job_application.email }}</p>
+                <p><strong>Phone:</strong> {{ saved.job_application.phone_number }}</p>
+                <p><strong>Match Score:</strong> {{ saved.overall_match_score }}%</p>
+                <p><strong>Category:</strong> <span class="category-text">{{ saved.category }}</span></p>
+                <p><strong>Matching Skills:</strong> {{ saved.matching_skills }}</p>
+                <p><strong>Missing Skills:</strong> {{ saved.missing_skills }}</p>
+                <p><strong>Saved At:</strong> {{ saved.saved_at }}</p>
+                
+                <form class="category-form" data-id="{{ saved.id }}">
+                    {% csrf_token %}
+                    <select name="category" class="category-select">
+                        <option value="Shortlisted" {% if saved.category == 'Shortlisted' %}selected{% endif %}>Shortlisted</option>
+                        <option value="Reviewed" {% if saved.category == 'Reviewed' %}selected{% endif %}>Reviewed</option>
+                        <option value="Rejected" {% if saved.category == 'Rejected' %}selected{% endif %}>Rejected</option>
+                    </select>
+                    <button type="submit">Update Category</button>
+                </form>
+
+                <div class="email-buttons">
+                    <a href="mailto:{{ saved.job_application.email }}?subject=Regarding your application for {{ saved.job_application.job.title }}&body=Dear {{ saved.job_application.name }},%0D%0A%0D%0AThank you for your application for the {{ saved.job_application.job.title }} position.%0D%0A%0D%0ABest regards," 
+                       class="quick-email-btn">
+                        Quick Email
+                    </a>
+                    <button class="compose-email-btn" 
+                            onclick="openEmailModal('{{ saved.job_application.email }}', '{{ saved.job_application.name }}', '{{ saved.job_application.job.title }}')">
+                        Compose Email
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <p>No saved applications found.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Email Modal -->
+    <div id="emailModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEmailModal()">&times;</span>
+            <h2>Compose Email</h2>
+            <form id="emailForm" class="email-form">
+                <div class="form-group">
+                    <label for="emailTemplate">Template:</label>
+                    <select id="emailTemplate" onchange="loadTemplate()">
+                        <option value="">Select Template</option>
+                        <option value="interview">Interview Invitation</option>
+                        <option value="shortlisted">Shortlisted</option>
+                        <option value="rejection">Rejection</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="emailTo">To:</label>
+                    <input type="email" id="emailTo" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="emailSubject">Subject:</label>
+                    <input type="text" id="emailSubject">
+                </div>
+
+                <div class="form-group">
+                    <label for="emailBody">Message:</label>
+                    <textarea id="emailBody"></textarea>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="preview-btn" onclick="previewEmail()">Preview</button>
+                    <button type="button" class="send-btn" onclick="sendEmail()">Send Email</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Existing filter and sort functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryFilter = document.getElementById('categoryFilter');
+            const sortSelect = document.getElementById('sortSelect');
+            const applicationsContainer = document.getElementById('applicationsContainer');
+            const categoryForms = document.querySelectorAll('.category-form');
+
+            // Filter applications by category
+            function filterApplications() {
+                const selectedCategory = categoryFilter.value;
+                const cards = document.querySelectorAll('.application-card');
+
+                cards.forEach(card => {
+                    if (selectedCategory === 'All' || card.dataset.category === selectedCategory) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Handle category updates
+            categoryForms.forEach(form => {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const savedId = this.dataset.id;
+                    const formData = new FormData(this);
+                    const card = this.closest('.application-card');
+                    
+                    try {
+                        card.classList.add('loading');
+                        const response = await fetch(`/update-category/${savedId}/`, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+
+                        if (response.ok) {
+                            const newCategory = formData.get('category');
+                            card.dataset.category = newCategory;
+                            card.querySelector('.category-text').textContent = newCategory;
+                            filterApplications();
+                        } else {
+                            throw new Error('Update failed');
+                        }
+                    } catch (error) {
+                        console.error('Error updating category:', error);
+                        alert('Failed to update category. Please try again.');
+                    } finally {
+                        card.classList.remove('loading');
+                    }
+                });
+            });
+
+            // Sort applications
+            async function sortApplications() {
+                const sortBy = sortSelect.value;
+                try {
+                    const response = await fetch(`?sort=${sortBy}`);
+                    if (response.ok) {
+                        const html = await response.text();
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newContainer = doc.getElementById('applicationsContainer');
+                        applicationsContainer.innerHTML = newContainer.innerHTML;
+                        filterApplications();
+                    }
+                } catch (error) {
+                    console.error('Error sorting applications:', error);
+                }
+            }
+
+            categoryFilter.addEventListener('change', filterApplications);
+            sortSelect.addEventListener('change', sortApplications);
+        });
+
+        // Email functionality
+        const emailTemplates = {
+            interview: {
+                subject: "Interview Invitation - {jobTitle}",
+                body: `Dear {name},
+
+Thank you for applying for the {jobTitle} position. We were impressed with your application and would like to invite you for an interview.
+
+Please let us know your availability for next week.
+
+Best regards,
+{recruiterName}`
+            },
+            shortlisted: {
+                subject: "Application Update - {jobTitle}",
+                body: `Dear {name},
+
+Thank you for applying for the {jobTitle} position. We are pleased to inform you that your application has been shortlisted.
+
+We will be in touch soon with next steps.
+
+Best regards,
+{recruiterName}`
+            },
+            rejection: {
+                subject: "Update on your application for {jobTitle}",
+                body: `Dear {name},
+
+Thank you for applying for the {jobTitle} position and for your interest in our company.
+
+After careful consideration, we have decided to move forward with other candidates whose qualifications better match our current needs.
+
+We appreciate your interest in our company and wish you success in your job search.
+
+Best regards,
+{recruiterName}`
+            }
+        };
+
+        function openEmailModal(email, name, jobTitle) {
+            const modal = document.getElementById('emailModal');
+            const emailTo = document.getElementById('emailTo');
+            
+            modal.dataset.name = name;
+            modal.dataset.jobTitle = jobTitle;
+            
+            emailTo.value = email;
+            modal.style.display = 'block';
+        }
+
+        function closeEmailModal() {
+            const modal = document.getElementById('emailModal');
+            modal.style.display = 'none';
+            document.getElementById('emailForm').reset();
+        }
+
+        function loadTemplate() {
+            const template = document.getElementById('emailTemplate').value;
+            if (!template) return;
+
+            const modal = document.getElementById('emailModal');
+            const name = modal.dataset.name;
+            const jobTitle = modal.dataset.jobTitle;
+            const recruiterName = 'Recruiter Name'; // You can make this dynamic
+
+            const selectedTemplate = emailTemplates[template];
+            
+            document.getElementById('emailSubject').value = selectedTemplate.subject
+                .replace('{jobTitle}', jobTitle);
+            
+            document.getElementById('emailBody').value = selectedTemplate.body
+                .replace('{name}', name)
+                .replace('{jobTitle}', jobTitle)
+                .replace('{recruiterName}', recruiterName);
+        }
+
+        function previewEmail() {
+            const subject = document.getElementById('emailSubject').value;
+            const body = document.getElementById('emailBody').value;
+            
+            const previewWindow = window.open('', '_blank');
+            previewWindow.document.write(`
+                <html>
+                <head>
+                    <title>Email Preview</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        .preview-container { max-width: 600px; margin: 0 auto; }
+                        .preview-subject { font-weight: bold; margin-bottom: 20px; }
+                        .preview-body { white-space: pre-wrap; }
+                    </style>
+                </head>
+                <body>
+                    <div class="preview-container">
+                        <div class="preview-subject">Subject: ${subject}</div>
+                        <div class="preview-body">${body}</div>
+                    </div>
+                </body>
+                </html>
+            `);
+        }
+
+        function sendEmail() {
+            const to = document.getElementById('emailTo').value;
+            const subject = document.getElementById('emailSubject').value;
+            const body = document.getElementById('emailBody').value;
+            
+            const encodedBody = encodeURIComponent(body);
+            const mailtoLink = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodedBody}`;
+            
+            window.location.href = mailtoLink;
+            closeEmailModal();
+        }
+    </script>
+</body>
+</html>
+</antArtifact

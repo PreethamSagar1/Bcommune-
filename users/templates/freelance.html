@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Freelance Projects</title>
+    <link rel="stylesheet" href="{% static 'css/common.css'%}">
+    <link rel="stylesheet" href="{% static 'css/myfreelance.css'%}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+<body>
+
+    {% include 'header2.html' %}
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        {% include 'sidebarcompany.html' %}
+
+        <!-- Main Content -->
+        <div class="content">
+            <section class="project-explore">
+                <div class="post-requirement">
+                    <a href="{% url 'post_freelance' %}" class="post-button">+ Post a Freelance Project</a>
+                </div>
+                <h2>My Freelance Projects</h2>
+                <div class="project-cards">
+                    {% if projects %}
+                        {% for project in projects %}
+                            <div class="project-card">
+                                <div class="card-header">
+                                    <div class="header-content">
+                                        <h3>{{ project.title }}</h3>
+                                        <p class="company">{{ project.company }}</p>
+                                    </div>
+                                    <!-- Provide a valid path to the image -->
+                                    <img src="{% static 'images/B.png' %}" alt="{{ project.company }} Logo" class="header-image" style="border-radius: 50%;">
+                                </div>
+                                <div class="card-body">
+                                    <p class="category">🛠️ {{ project.category }}</p>
+                                    <p class="budget">💰 {{ project.budget }}</p>
+                                    <div class="details">
+                                        <h4>Details:</h4>
+                                        <p>{{ project.description|truncatechars:150 }}</p>
+                                    </div>
+                                </div>
+                            
+                                <p class="posted-date">Posted: {{ project.posted_date|date:"M d, Y" }}</p>
+                                <div class="project-actions">
+                                    <!-- Edit Button -->
+                                    <a href="{% url 'edit_freelance' project.id %}" class="edit-button">Edit</a>
+                                
+                                    <!-- Delete Button -->
+                                    <button class="delete-button" onclick="confirmDelete('{{ project.id }}')">Delete</button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-projects">No freelance projects posted yet.</p>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Confirm Delete Function
+        function confirmDelete(projectId) {
+            if (confirm("Are you sure you want to delete this freelance project?")) {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                
+                fetch(`/company/dashboard/myfreelance/delete/${projectId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Freelance project deleted successfully.');
+                        location.reload(); // Reload page to update the project list
+                    } else {
+                        alert('Failed to delete the project. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Job</title>
+    <link rel="stylesheet" href="{% static 'css/jobcreate.css'%}">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <img src="{% static 'images/Bcommune_logo.png' %}" alt="Bcommune Logo">
+            </div>
+            <nav>
+                <a href="{% url 'myjobs' %}">View Jobs</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="form-container">
+        <h2>Create a Job Posting</h2>
+        <form id="jobPostForm" action="{% url 'post_job' %}" method="POST">
+            {% csrf_token %}
+            <label for="job-title">Job Title:</label>
+            <input type="text" id="job-title" name="job_title" required>
+
+            <label for="company-name">Company Name:</label>
+            <input type="text" id="company-name" name="company_name" required>
+
+            <label for="job-location">Job Location:</label>
+            <input type="text" id="job-location" name="job_location" required>
+
+            <label for="job-type">Job Type:</label>
+            <select id="job-type" name="job_type" required>
+                <option value="Full-Time">Full-Time</option>
+                <option value="Part-Time">Part-Time</option>
+                <option value="Internship">Internship</option>
+                <option value="Contract">Contract</option>
+            </select>
+
+            <label for="salary">Salary Range:</label>
+            <input type="text" id="salary" name="salary">
+
+            <label for="required-skills">Required Skills (comma-separated):</label>
+            <input type="text" id="required-skills" name="required_skills" required>
+
+            <label for="min-experience">Minimum Experience (in years):</label>
+            <input type="number" id="min-experience" name="min_experience" min="0" required>
+
+            <label for="required-qualification">Required Qualification:</label>
+            <select id="required-qualification" name="required_qualification" required>
+                <option value="bachelor">Bachelor's</option>
+                <option value="master">Master's</option>
+                <option value="phd">PhD</option>
+            </select>
+
+            <label for="description">Job Description:</label>
+            <textarea id="description" name="job_description" required></textarea>
+
+            <button type="submit">Post Job</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('jobPostForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('{% url "post_job" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    // Redirect back to dashboard or refresh job listings
+                    window.location.href = '{% url "company_dashboard" %}';
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while posting the job.');
+            });
+        });
+    </script>
+</body>
+</html>

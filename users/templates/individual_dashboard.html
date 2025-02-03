@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+{%load static%}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/common.css'%}">
+</head>
+<body>
+    <style>
+/* Card Grid Layout */
+.idea-cards, .bid-cards, .top-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* Common Card Styles */
+.idea-card, .bid-card, .top-card, .job-card {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.idea-card:hover, .bid-card:hover, .top-card:hover, .job-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Cards container - Three cards in a row */
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Job Card Header */
+.job-card .card-header {
+    display: flex;
+    justify-content: space-between; /* This will space out the job title/company and logo */
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #1a2734;
+    color: white;
+}
+
+.job-card .card-header h3 {
+    margin: 0;
+    font-size: 18px;
+    flex-grow: 1; /* Ensure that the title takes available space */
+}
+
+.job-card .card-header p {
+    margin-top: 5px;
+    font-size: 16px;
+    color: #ccc;
+}
+
+.job-card .card-header img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Idea Card Header */
+.idea-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #1a2734;
+    color: white;
+}
+
+.idea-card .card-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.idea-card .card-header img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Card Body */
+.card-body {
+    padding: 15px;
+}
+
+.card-body p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 14px;
+}
+
+.posted-date {
+    font-size: 0.9em;
+    color: #888;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+/* Freelance Card Header */
+.freelance-card .freelance-card-header {
+    padding: 10px 15px;
+    background-color: #1a2734;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Freelance Card Body */
+.freelance-card .freelance-card-body {
+    padding: 15px;
+}
+
+.freelance-card .freelance-card-body p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 14px;
+}
+
+.freelance-card .freelance-card-body .posted-date {
+    font-size: 0.9em;
+    color: #888;
+}
+
+/* Freelance Card Styling */
+.freelance-card {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.freelance-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+    </style>
+    
+    {% include 'header1.html' %}
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        {% include 'sidebar.html' %}
+
+        <!-- Main Content -->
+        <div class="content">
+            <h2>{{ user.get_full_name }}'s Dashboard</h2>
+            <br>
+
+            <!-- Jobs Section -->
+            <section id="jobs">
+                <a href="{% url 'individual_alljobs' %}"><h3>Jobs</h3></a>
+                <div class="cards-container">
+                    {% for job in jobs %}
+                        <div class="job-card" onclick="window.location.href='{% url 'individual_alljobs' %}?job_id={{ job.id }}';" style="cursor: pointer;">
+                            <!-- Card Header -->
+                            <div class="card-header">
+                                <div>
+                                    <h3>{{ job.title }}</h3>
+                                    <p>{{ job.company }}</p>
+                                </div>
+                                <img src="{% static 'images/B.png' %}" alt="Logo">
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <p><strong>Location:</strong> {{ job.location }}</p>
+                                <p>{{ job.description }}</p>
+                                <p><strong>Requirements:</strong></p>
+                                <p>{{ job.requirements }}</p>
+                                <p class="posted-date">Posted: {{ job.posted_date|date:'M d, Y' }}</p>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No jobs available at the moment.</p>
+                    {% endfor %}
+                </div>
+            </section>
+            <br>
+
+            <!-- Ideas Section -->
+            <section id="ideas">
+                <a href="#"><h3>Ideas You Have Submitted</h3></a>
+                <br>
+                <div class="idea-cards">
+                    {% for idea in ideas %}
+                        <div class="idea-card">
+                            <div class="card-header">
+                                <h3>{{ idea.title }}</h3>
+                                <img src="{% static 'images/B.png' %}" alt="Logo">
+                            </div>
+                            <div class="card-body">
+                                {% if idea.photo %}
+                                    <img src="{{ idea.photo.url }}" alt="{{ idea.title }}">
+                                {% endif %}
+                                <p>{{ idea.brief_description|truncatechars:100 }}</p>
+                                <div class="idea-meta">
+                                    <p><strong>Category:</strong> {{ idea.category }}</p>
+                                    <p><strong>Fund:</strong> ${{ idea.fund }}</p>
+                                </div>
+                                <div class="post-requirement">
+                                    <a href="{% url 'idea_detail' idea.id %}" class="post-button" style="font-size: medium;">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No ideas available to display.</p>
+                    {% endfor %}
+                </div>
+            </section>
+            <br>
+
+            <!-- Freelance Section -->
+            <section id="freelance-projects">
+                <a href="{% url 'all_freelance_projects' %}"><h3>Freelance Projects</h3></a>
+                <div class="cards-container">
+                    {% for project in freelance_projects %}
+                        <div class="freelance-card" onclick="window.location.href='{% url 'all_freelance_projects' %}?project_id={{ project.id }}';" style="cursor: pointer;">
+                            <!-- Freelance Card Header -->
+                            <div class="freelance-card-header">
+                                <h4>{{ project.title }}</h4>
+                            </div>
+                            <!-- Freelance Card Body -->
+                            <div class="freelance-card-body">
+                                <p><strong>Category:</strong> {{ project.category }}</p>
+                                <p><strong>Budget:</strong> {{ project.budget }}</p>
+                                <p><strong>Experience Level:</strong> {{ project.experience_level }}</p>
+                                <p><strong>Duration:</strong> {{ project.duration }}</p>
+                                <p>{{ project.description|truncatewords:20 }}</p>
+                                <p><strong>Skills Required:</strong> {{ project.skills_required }}</p>
+                                <p class="posted-date">Posted: {{ project.created_at|date:"M d, Y" }}</p>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No freelance projects available at the moment.</p>
+                    {% endfor %}
+                </div>
+            </section>
+            <br>
+
+
+            <!-- Internships Section -->
+            <section id="internships">
+                <a href="#"><h3>Internships</h3></a>
+                <div class="cards-container" id="internships-container"></div>
+            </section>
+
+            <!-- Startups Section -->
+            <section id="startups">
+                <h3>Become a core member of startups</h3>
+                <div class="cards-container" id="startups-container"></div>
+            </section>
+
+        </div>
+    </div>
+</body>
+</html>

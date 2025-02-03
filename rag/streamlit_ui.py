@@ -1,0 +1,171 @@
+import os
+import json
+import re
+import asyncio
+from datetime import datetime, timezone
+from urllib.parse import urlparse
+from openai import AsyncOpenAI
+from supabase import create_client, Client
+import streamlit as st
+import PyPDF2  # For PDF files
+import docx  # For Word documents
+from typing import List
+from tenacity import retry, wait_fixed, stop_after_attempt
+
+# Hardcoded Supabase and OpenAI credentials
+SUPABASE_URL = "https://qlgpplquymkdfxvchhgb.supabase.co"  # Replace with your Supabase URL
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsZ3BwbHF1eW1rZGZ4dmNoaGdiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczODI1NzUzNCwiZXhwIjoyMDUzODMzNTM0fQ._nfKI6glaOmTFqn3Cl2erkT89hAHE37ts_I01rhVTdE"  # Replace with your Supabase API key
+OPENAI_API_KEY = "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"  # Replace with your OpenAI API key
+
+# Initialize Supabase client
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+# OpenAI API client
+openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+
+@retry(wait=wait_fixed(2), stop=stop_after_attempt(3))  # Retry up to 3 times with a 2-second delay
+async def get_embedding(text: str) -> List[float]:
+    """Get embedding vector from OpenAI."""
+    try:
+        response = await openai_client.embeddings.create(
+            model="text-embedding-3-small", input=text
+        )
+        return response.data[0].embedding
+    except Exception as e:
+        st.error(f"Error getting embedding: {e}")
+        return []
+
+@retry(wait=wait_fixed(2), stop=stop_after_attempt(3))  # Retry up to 3 times with a 2-second delay
+async def extract_metadata(text: str) -> dict:
+    """Extract structured metadata from resume text."""
+    system_prompt = """
+    Extract structured metadata (skills, experience, keywords) from the following resume text.
+    Return the metadata as a JSON object with the following fields:
+    - skills: List of skills mentioned in the resume.
+    - experience: List of experience items (e.g., job titles, roles).
+    - keywords: List of keywords relevant to the resume.
+    """
+    try:
+        response = await openai_client.chat.completions.create(
+            model="gpt-4-turbo",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": text[:1000]}  # Limit input size
+            ],
+            response_format={"type": "json_object"}
+        )
+        return json.loads(response.choices[0].message.content)
+    except Exception as e:
+        st.error(f"Error extracting metadata: {e}")
+        return {}
+
+def extract_email(text: str) -> str:
+    """Extract email address from resume text using regex."""
+    email_pattern = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+    match = re.search(email_pattern, text)
+    return match.group(0) if match else "unknown@example.com"
+
+def extract_resume_text(uploaded_file):
+    """Extract text from uploaded resume file."""
+    if uploaded_file.type == "text/plain":
+        return uploaded_file.getvalue().decode("utf-8")
+    elif uploaded_file.type == "application/pdf":
+        reader = PyPDF2.PdfReader(uploaded_file)
+        text = ""
+        for page in reader.pages:
+            text += page.extract_text() if page.extract_text() else ""
+        return text
+    elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        doc = docx.Document(uploaded_file)
+        return "\n".join(para.text for para in doc.paragraphs)
+    else:
+        raise ValueError("Unsupported file type. Please upload a plain text, PDF, or Word document.")
+
+async def insert_resume(candidate_name: str, email: str, resume_text: str, embedding: List[float], metadata: dict):
+    """Insert or update resume in the Supabase database."""
+    if not embedding or not metadata:
+        raise ValueError("Embedding or metadata cannot be empty.")
+
+    resume_data = {
+        "candidate_name": candidate_name,
+        "email": email,
+        "resume_text": resume_text,
+        "metadata": metadata,
+        "embedding": embedding,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+
+    response = supabase.table("resumes").upsert(resume_data, on_conflict="email").execute()
+    if response.data:
+        st.success(f"Resume uploaded and profile created for {candidate_name}!")
+    else:
+        st.error(f"Failed to upload resume for {candidate_name}.")
+
+async def process_and_store_resume(candidate_name: str, email: str, uploaded_file):
+    """Process a resume and store it in the Supabase database."""
+    try:
+        resume_text = extract_resume_text(uploaded_file)
+        embedding = await get_embedding(resume_text)
+        metadata = await extract_metadata(resume_text)
+        await insert_resume(candidate_name, email, resume_text, embedding, metadata)
+    except Exception as e:
+        st.error(f"Error processing resume: {e}")
+
+async def search_resumes_by_embedding(query_text: str, match_count: int = 10) -> List[dict]:
+    """Search for resumes using vector similarity in Supabase."""
+    query_embedding = await get_embedding(query_text)
+
+    if not query_embedding:
+        st.error("Failed to generate embedding for search query.")
+        return []
+
+    response = supabase.rpc("match_resumes", {
+        "query_embedding": query_embedding,
+        "match_count": match_count
+    }).execute()
+
+    return response.data if response.data else []
+
+def streamlit_ui():
+    st.title("AI-Powered Resume Search System")
+
+    page = st.sidebar.radio("Select an option", ("Upload Resume", "Search Resumes"))
+
+    if page == "Upload Resume":
+        st.header("Upload Resume & Create Profile")
+
+        with st.form(key="profile_form"):
+            candidate_name = st.text_input("Full Name")
+            email = st.text_input("Email")
+            uploaded_file = st.file_uploader("Upload Resume", type=["txt", "pdf", "docx"])
+            submit_button = st.form_submit_button("Upload Resume")
+
+            if submit_button and uploaded_file is not None:
+                asyncio.run(process_and_store_resume(candidate_name, email, uploaded_file))
+
+    elif page == "Search Resumes":
+        st.header("Search Resumes")
+
+        search_query = st.text_input("Enter search query (e.g., skills, job title)")
+
+        if st.button("Search Resumes"):
+            if search_query:
+                st.write("Searching for matching profiles...")
+                search_results = asyncio.run(search_resumes_by_embedding(search_query, match_count=5))
+
+                if search_results:
+                    for resume in search_results:
+                        with st.container():
+                            st.markdown(f"""
+                            <div style="border: 2px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);">
+                                <h3 style="color: #2E7D32;">{resume.get('candidate_name', 'Unknown')}</h3>
+                                <p><strong>Email:</strong> {resume.get('email', 'N/A')}</p>
+                                <p><strong>Skills:</strong> {', '.join(resume.get('metadata', {}).get('skills', []))}</p>
+                                <p><strong>Experience:</strong> {', '.join(resume.get('metadata', {}).get('experience', []))}</p>
+                            </div>
+                            """, unsafe_allow_html=True)
+                else:
+                    st.warning("No matching profiles found.")
+
+if __name__ == "__main__":
+    streamlit_ui()

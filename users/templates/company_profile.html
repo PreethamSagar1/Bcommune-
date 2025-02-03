@@ -1,0 +1,321 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Profile</title>
+    <style>
+        /* General Styles */
+        *{
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+        body {
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            margin-top: 20px;
+        }
+
+        .btn-edit, .btn-cancel, .btn-save, .btn-main-save {
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .btn-edit {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+            display: none;
+        }
+
+        .btn-save {
+            background-color: #28a745;
+            color: white;
+            display: none;
+        }
+
+        .btn-main-save {
+            background-color: #28a745;
+            color: white;
+            display: block; /* Make it visible by default */
+            margin: 20px auto;
+            width: 200px;
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-field {
+            display: none;
+        }
+
+        .display-field {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .profile-pic-container {
+            text-align: center;
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .col-md-4, .col-md-8 {
+            flex: 1;
+        }
+    </style>
+    <script>
+        let activeSection = null;
+
+        function toggleEdit(sectionId) {
+            const section = document.getElementById(sectionId);
+            const displayFields = section.querySelectorAll('.display-field');
+            const formFields = section.querySelectorAll('.form-field');
+            const editButton = section.querySelector('.btn-edit');
+            const cancelButton = section.querySelector('.btn-cancel');
+            const saveButton = section.querySelector('.btn-save');
+            const mainSaveButton = document.querySelector('.btn-main-save');
+
+            if (activeSection === sectionId) {
+                displayFields.forEach(field => field.style.display = 'block');
+                formFields.forEach(field => field.style.display = 'none');
+                editButton.style.display = 'block';
+                cancelButton.style.display = 'none';
+                saveButton.style.display = 'none';
+                mainSaveButton.style.display = 'none';
+                activeSection = null;
+            } else {
+                if (activeSection) {
+                    saveChanges(activeSection);
+                }
+
+                displayFields.forEach(field => field.style.display = 'none');
+                formFields.forEach(field => field.style.display = 'block');
+                editButton.style.display = 'none';
+                cancelButton.style.display = 'block';
+                saveButton.style.display = 'block';
+                mainSaveButton.style.display = 'block';
+                activeSection = sectionId;
+
+                document.addEventListener('click', handleOutsideClick);
+            }
+        }
+
+        function saveChanges(sectionId) {
+            const section = document.getElementById(sectionId);
+            const formFields = section.querySelectorAll('.form-field');
+            const displayFields = section.querySelectorAll('.display-field');
+
+            formFields.forEach((formField, index) => {
+                const input = formField.querySelector('input, select, textarea');
+                if (input) {
+                    const updatedValue = input.value;
+                    const displayField = displayFields[index];
+                    if (displayField) {
+                        displayField.textContent = updatedValue;
+                    }
+                }
+            });
+
+            console.log("Changes saved for section:", sectionId);
+            toggleEdit(sectionId);
+        }
+
+        function handleOutsideClick(event) {
+            const activeSectionElement = document.getElementById(activeSection);
+            if (activeSectionElement && !activeSectionElement.contains(event.target)) {
+                saveChanges(activeSection);
+                activeSection = null;
+                document.removeEventListener('click', handleOutsideClick);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Company Profile</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="section" id="basic-info">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="profile-pic-container">
+                            {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
+                            {% else %}
+                            <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic">
+                            {% endif %}
+                            <div class="form-field">
+                                <label for="id_profile_picture">Change Profile Picture:</label>
+                                {{ form.profile_picture }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div>
+                            <label>Company Name:</label>
+                            <p class="display-field">{{ user.company_name }}</p>
+                            <div class="form-field">{{ form.company_name }}</div>
+                        </div>
+                        <div>
+                            <label>Contact Number:</label>
+                            <p class="display-field">{{ user.phone_number }}</p>
+                            <div class="form-field">{{ form.phone_number }}</div>
+                        </div>
+                        <div>
+                            <label>Email:</label>
+                            <p class="display-field">{{ user.email }}</p>
+                            <div class="form-field">{{ form.email }}</div>
+                        </div>
+                        <div>
+                            <label>Website:</label>
+                            <p class="display-field">{{ user.company_website }}</p>
+                            <div class="form-field">{{ form.company_website }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn-edit" onclick="toggleEdit('basic-info')">Edit</button>
+                </div>
+            </div>
+            <!-- Add other sections similarly -->
+
+            <!-- About the Company Section -->
+            <div class="section" id="about-company">
+                <h3>About the Company</h3>
+                <div>
+                    <label>Company Description:</label>
+                    <p class="display-field">{{ user.about_company }}</p>
+                    <div class="form-field">{{ form.about_company }}</div>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn-edit" onclick="toggleEdit('about-company')">Edit</button>
+                </div>
+            </div>
+
+            <!-- Company Details Section -->
+            <div class="section" id="company-details">
+                <h3>Company Details</h3>
+                <div>
+                    <label>Industry:</label>
+                    <p class="display-field">{{ user.industry }}</p>
+                    <div class="form-field">{{ form.industry }}</div>
+                </div>
+                <div>
+                    <label>Founding Year:</label>
+                    <p class="display-field">{{ user.founding_year }}</p>
+                    <div class="form-field">{{ form.founding_year }}</div>
+                </div>
+                <div>
+                    <label>Company Size:</label>
+                    <p class="display-field">{{ user.company_size }}</p>
+                    <div class="form-field">{{ form.company_size }}</div>
+                </div>
+                <div>
+                    <label>Headquarters:</label>
+                    <p class="display-field">{{ user.headquarters }}</p>
+                    <div class="form-field">{{ form.headquarters }}</div>
+                </div>
+                <div>
+                    <label>Branches/Offices:</label>
+                    <p class="display-field">{{ user.branches }}</p>
+                    <div class="form-field">{{ form.branches }}</div>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn-edit" onclick="toggleEdit('company-details')">Edit</button>
+                </div>
+            </div>
+
+            <!-- Company Profile Section -->
+            <div class="section" id="company-profile">
+                <h3>Company Profile</h3>
+                <div>
+                    <label>Business Registration Number:</label>
+                    <p class="display-field">{{ user.business_registration_number }}</p>
+                    <div class="form-field">{{ form.business_registration_number }}</div>
+                </div>
+                <div>
+                    <label>Legal Structure:</label>
+                    <p class="display-field">{{ user.get_legal_structure_display }}</p>
+                    <div class="form-field">{{ form.legal_structure }}</div>
+                </div>
+                <div>
+                    <label>Core Services/Products:</label>
+                    <p class="display-field">{{ user.core_services }}</p>
+                    <div class="form-field">{{ form.core_services }}</div>
+                </div>
+                <div>
+                    <label>Social Media Links:</label>
+                    <p class="display-field">
+                        Facebook: {{ user.social_media_links.facebook }}<br>
+                        LinkedIn: {{ user.social_media_links.linkedin }}<br>
+                        Twitter: {{ user.social_media_links.twitter }}
+                    </p>
+                    <div class="form-field">{{ form.social_media_links }}</div>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn-edit" onclick="toggleEdit('company-profile')">Edit</button>
+                </div>
+            </div>
+
+            <!-- Portfolio Section -->
+            <div class="section" id="portfolio">
+                <h3>Portfolio/Showcase</h3>
+                <p class="display-field">{{ user.portfolio }}</p>
+                <div class="form-field">
+                    {{ form.portfolio }}
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn-edit" onclick="toggleEdit('portfolio')">Edit</button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-main-save">Save All Changes</button>
+        </form>
+    </div>
+</body>
+</html>

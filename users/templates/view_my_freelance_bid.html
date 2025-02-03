@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View bid</title>
+</head>
+<body>
+    <style>
+        /* Reset and basic styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.container {
+    max-width: 85%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Card styling */
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.card-header {
+    background-color: #1a2734;
+    color: white;
+    padding: 10px;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Heading */
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Section headings */
+h5 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* Bid details section */
+.bid-details {
+    margin-bottom: 20px;
+}
+
+/* Paragraph styling */
+p {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+strong {
+    font-weight: bold;
+}
+
+/* Links and buttons */
+a {
+    text-decoration: none;
+}
+
+.btn {
+    background-color: #1a2734;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+/* Footer / Timestamp */
+small {
+    color: #6c757d;
+}
+
+/* Media Query for smaller screens */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    h5 {
+        font-size: 18px;
+    }
+
+    p {
+        font-size: 14px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+    </style>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Your Bid for {{ project.title }}</h2>
+                </div>
+                <div class="card-body">
+                    <div class="bid-details">
+                        <div class="mb-3">
+                            <h5>Personal Information</h5>
+                            <p><strong>Name:</strong> {{ bid.name }}</p>
+                            <p><strong>Email:</strong> {{ bid.email }}</p>
+                            <p><strong>Phone:</strong> {{ bid.phone }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <h5>Portfolio Links</h5>
+                            <p>{{ bid.portfolio_links|linebreaks }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <h5>Previous Works</h5>
+                            <p>{{ bid.previous_works|linebreaks }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <h5>Bid Details</h5>
+                            <p><strong>Expected Pay:</strong> ${{ bid.expected_pay }}</p>
+                            <p><strong>Timeline:</strong> {{ bid.timeline }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <h5>Execution Plan</h5>
+                            <p>{{ bid.execution_plan|linebreaks }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <p><small class="text-muted">Bid submitted on: {{ bid.created_at|date:"F d, Y" }}</small></p>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'all_freelance_projects' %}" class="btn btn-primary">Back to Projects</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,162 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ profile.user.username }}'s Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #2c3e50;
+        }
+    
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+    
+        .profile-img {
+            display: block;
+            margin: 0 auto 20px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #3498db;
+        }
+    
+        .section-title {
+            margin-top: 30px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #34495e;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+    
+        .section-content {
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    
+        .section-content p {
+            margin: 5px 0;
+            line-height: 1.5;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+    
+        .section-content strong {
+            color: #2c3e50;
+        }
+    
+        a {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+    
+        a:hover {
+            background-color: #2980b9;
+        }
+    
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+    
+            h1 {
+                font-size: 1.8em;
+            }
+    
+            .profile-img {
+                width: 120px;
+                height: 120px;
+            }
+    
+            .section-title {
+                font-size: 1.2em;
+            }
+    
+            a {
+                font-size: 12px;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+    
+</head>
+<body>
+    <a href="{% url 'edit_individual_profile' %}">Edit Profile</a>
+    <h1>{{ profile.user.first_name }}'s Profile</h1>
+
+    <!-- Check if profile picture exists -->
+    {% if profile.profile_picture %}
+        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-img">
+    {% else %}
+        <img src="{% static 'images/default_profile_picture.png' %}" alt="Default Profile Picture" class="profile-img">
+    {% endif %}
+
+    <div class="section-title">General Information</div>
+    <div class="section-content">
+        <p><strong>Location:</strong> {{ profile.location }}</p>
+        <p><strong>Tagline:</strong> {{ profile.tagline }}</p>
+        <p><strong>Availability Status:</strong> {{ profile.get_availability_status_display }}</p>
+        <p><strong>About Me:</strong> {{ profile.about_me }}</p>
+        <p><strong>Desired Role:</strong> {{ profile.desired_role }}</p>
+        <p><strong>Desired Location:</strong> {{ profile.desired_location }}</p>
+        <p><strong>Work Type:</strong> {{ profile.get_work_type_display }}</p>
+        <p><strong>Expected Salary:</strong> {{ profile.salary_expected }}</p>
+    </div>
+
+    <div class="section-title">Work Experience</div>
+    <div class="section-content">
+        <p><strong>Current Position:</strong> {{ profile.current_position_title }}</p>
+        <p><strong>Current Company:</strong> {{ profile.current_company }}</p>
+        <p><strong>Duration:</strong> {{ profile.current_duration }}</p>
+        <p><strong>Key Responsibilities:</strong> {{ profile.key_responsibilities }}</p>
+    </div>
+
+    <div class="section-title">Education</div>
+    <div class="section-content">
+        <p><strong>Qualification:</strong> {{ profile.qualification }}</p>
+        <p><strong>Institution:</strong> {{ profile.institution }}</p>
+        <p><strong>Year of Completion:</strong> {{ profile.year_of_completion }}</p>
+        <p><strong>Certifications:</strong> {{ profile.certifications|join:", " }}</p>
+    </div>
+
+    <div class="section-title">Portfolio/Projects</div>
+    <div class="section-content">
+        <p><strong>Projects:</strong> {{ profile.projects|join:", " }}</p>
+    </div>
+
+    <div class="section-title">Achievements</div>
+    <div class="section-content">
+        <p><strong>Awards:</strong> {{ profile.awards|join:", " }}</p>
+        <p><strong>Publications:</strong> {{ profile.publications|join:", " }}</p>
+    </div>
+
+    <div class="section-title">Interests</div>
+    <div class="section-content">
+        <p><strong>Hobbies:</strong> {{ profile.hobbies|join:", " }}</p>
+    </div>
+
+   
+</body>
+</html>

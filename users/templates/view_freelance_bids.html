@@ -1,0 +1,57 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bids for {{ project.title }}</title>
+</head>
+<body>
+    <h1>Bids for Project: {{ project.title }}</h1>
+    <p><strong>Description:</strong> {{ project.description }}</p>
+    <p><strong>Budget:</strong> {{ project.budget }}</p>
+    <p><strong>Duration:</strong> {{ project.duration }}</p>
+
+    <h2>All Bids</h2>
+    {% if bids %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Portfolio Links</th>
+                    <th>Previous Works</th>
+                    <th>Expected Pay</th>
+                    <th>Timeline</th>
+                    <th>Execution Plan</th>
+                    <th>Submitted At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bid in bids %}
+                <tr>
+                    <td>{{ bid.name }}</td>
+                    <td>{{ bid.email }}</td>
+                    <td>{{ bid.phone }}</td>
+                    <td>
+                        {% for link in bid.portfolio_links.splitlines %}
+                        <a href="{{ link }}" target="_blank">{{ link }}</a><br>
+                        {% endfor %}
+                    </td>
+                    <td>{{ bid.previous_works }}</td>
+                    <td>${{ bid.expected_pay }}</td>
+                    <td>{{ bid.timeline }}</td>
+                    <td>{{ bid.execution_plan }}</td>
+                    <td>{{ bid.created_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No bids have been placed on this project yet.</p>
+    {% endif %}
+
+    <a href="{% url 'all_freelance_projects_company' %}">Back to Projects</a>
+</body>
+</html>

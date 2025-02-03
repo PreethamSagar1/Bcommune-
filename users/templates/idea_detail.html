@@ -1,0 +1,371 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ idea.title }} - Idea Details</title>
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <style>
+        .idea-detail-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .idea-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .idea-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .idea-section h2 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+
+        .idea-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1rem 0;
+        }
+
+        .idea-meta span {
+            background: #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        .fund {
+            color: #48bb78;
+            font-weight: 600;
+        }
+
+        .idea-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .fund-btn {
+            background: #48bb78;
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .fund-btn:hover {
+            background: #38a169;
+        }
+
+        .back-btn {
+            background: #e2e8f0;
+            color: #2d3748;
+            padding: 0.75rem 2rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #cbd5e0;
+        }
+
+        /* New styles for like/dislike buttons */
+        .reaction-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .like-btn {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .like-btn:hover {
+            background: #c8e6c9;
+        }
+
+        .like-btn.active {
+            background: #81c784;
+            color: white;
+        }
+
+        .dislike-btn {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .dislike-btn:hover {
+            background: #ffcdd2;
+        }
+
+        .dislike-btn.active {
+            background: #e57373;
+            color: white;
+        }
+
+        .reaction-count {
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .reactions-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+            justify-content: center;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .reaction-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header2.html' %}
+
+    <div class="main-container">
+        <!-- Previous content remains the same until the idea-actions div -->
+        <div class="idea-detail-container" data-idea-id="{{ idea.id }}" data-initial-like-state="{{ user_reaction|default_if_none:'' }}">
+            <div class="idea-header">
+                <h1 style="color: white;">{{ idea.title }}</h1>
+                <div class="idea-meta">
+                    <span class="category">{{ idea.category }}</span>
+                    <span class="fund">${{ idea.fund }}</span>
+                    <span class="date">Posted {{ idea.created_at|timesince }} ago</span>
+                </div>
+            </div>
+        
+            {% if idea.photo %}
+                <div class="idea-section">
+                    <img src="{{ idea.photo.url }}" alt="{{ idea.title }}" style="width: 100%; height: 100%; border-radius: 10px;">
+                </div>
+            {% endif %}
+        
+            <div class="idea-content">
+                <section class="idea-section">
+                    <h2>Brief Description</h2>
+                    <p>{{ idea.brief_description }}</p>
+                </section>
+        
+                {% if idea.patent_number %}
+                    <section class="idea-section">
+                        <h2>Patent Information</h2>
+                        <p><strong>Patent Number:</strong> {{ idea.patent_number }}</p>
+                        {% if idea.application_number %}
+                            <p><strong>Application Number:</strong> {{ idea.application_number }}</p>
+                        {% endif %}
+                    </section>
+                {% endif %}
+        
+                <section class="idea-section">
+                    <h2>Problem Statement</h2>
+                    <p>{{ idea.problem_statement }}</p>
+                </section>
+        
+                <section class="idea-section">
+                    <h2>Solution</h2>
+                    <p>{{ idea.solution }}</p>
+                </section>
+        
+                {% if idea.details %}
+                    <section class="idea-section">
+                        <h2>Additional Details</h2>
+                        <p>{{ idea.details }}</p>
+                    </section>
+                {% endif %}
+        
+                {% if idea.team_info %}
+                    <section class="idea-section">
+                        <h2>Team Information</h2>
+                        <p>{{ idea.team_info }}</p>
+                    </section>
+                {% endif %}
+        
+                {% if idea.video %}
+                    <section class="idea-section">
+                        <h2>Demo Video</h2>
+                        <video controls style="width: 100%; border-radius: 10px;">
+                            <source src="{{ idea.video.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </section>
+                {% endif %}
+        
+        <div class="idea-actions">
+            <a href="mailto:{{ idea.email }}?subject=Interest in {{ idea.title }}&body=Hello,%0D%0A%0D%0AI am interested in your idea titled '{{ idea.title }}'.%0D%0A%0D%0AHere are some questions I have:%0D%0A%0D%0A(Your Message Here)%0D%0A%0D%0AThank you!" class="fund-btn">
+                Show Interest
+            </a>
+            
+            <div class="reactions-container">
+                <button id="like-btn" class="reaction-btn like-btn">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span id="like-count" class="reaction-count">{{ idea.likes }}</span>
+                </button>
+                
+                <button id="dislike-btn" class="reaction-btn dislike-btn">
+                    <i class="fas fa-thumbs-down"></i>
+                    <span id="dislike-count" class="reaction-count">{{ idea.dislikes }}</span>
+                </button>
+            </div>
+
+            <a href="{% url 'explore_all_ideas' %}" class="back-btn">Back to Ideas</a>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let likeState = false;
+        let dislikeState = false;
+    
+        function showError(message) {
+            alert(message);
+        }
+    
+        function updateButtonStates() {
+            const likeBtn = document.getElementById('like-btn');
+            const dislikeBtn = document.getElementById('dislike-btn');
+            
+            if (likeBtn && dislikeBtn) {
+                likeBtn.classList.toggle('active', likeState);
+                dislikeBtn.classList.toggle('active', dislikeState);
+            }
+        }
+    
+        function animateCount(element, start, end) {
+            if (!element) return;
+            
+            const duration = 500;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const current = Math.round(start + (end - start) * progress);
+                element.textContent = current;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+    
+        async function handleReaction(action, ideaId) {
+            const likeCountElement = document.getElementById("like-count");
+            const dislikeCountElement = document.getElementById("dislike-count");
+            
+            if (!likeCountElement || !dislikeCountElement) {
+                console.error("Count elements not found");
+                return;
+            }
+    
+            const currentLikes = parseInt(likeCountElement.textContent) || 0;
+            const currentDislikes = parseInt(dislikeCountElement.textContent) || 0;
+    
+            try {
+                const response = await fetch(`/${action}/${ideaId}/`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+    
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        showError("Please log in to react to ideas");
+                        return;
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+    
+                const data = await response.json();
+                
+                if (typeof data.likes === 'number' && typeof data.dislikes === 'number') {
+                    animateCount(likeCountElement, currentLikes, data.likes);
+                    animateCount(dislikeCountElement, currentDislikes, data.dislikes);
+                    
+                    if (action === 'like') {
+                        likeState = !likeState;
+                        if (likeState) dislikeState = false;
+                    } else {
+                        dislikeState = !dislikeState;
+                        if (dislikeState) likeState = false;
+                    }
+                    
+                    updateButtonStates();
+                } else {
+                    console.error("Invalid response format", data);
+                    showError("An error occurred while updating the reaction");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError("An error occurred while processing your reaction");
+            }
+        }
+    
+        // Initialize the system when the document is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const ideaContainer = document.querySelector('[data-idea-id]');
+            if (ideaContainer) {
+                const ideaId = ideaContainer.dataset.ideaId;
+                const initialLikeState = ideaContainer.dataset.initialLikeState;
+                
+                // Set initial states
+                likeState = initialLikeState === 'liked';
+                dislikeState = initialLikeState === 'disliked';
+                
+                // Initialize button states
+                updateButtonStates();
+    
+                // Add click event listeners to the buttons
+                const likeBtn = document.getElementById('like-btn');
+                const dislikeBtn = document.getElementById('dislike-btn');
+    
+                if (likeBtn) {
+                    likeBtn.addEventListener('click', () => handleReaction('like', ideaId));
+                }
+    
+                if (dislikeBtn) {
+                    dislikeBtn.addEventListener('click', () => handleReaction('dislike', ideaId));
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+

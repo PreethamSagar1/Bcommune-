@@ -1,0 +1,73 @@
+/* Company homepage */
+
+/* Sections */
+.idea-explore, .bid-project, .top-picks {
+    margin-bottom: 40px;
+}
+
+h1, h2 {
+    font-size: 2rem;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    color: black;
+}
+
+
+a.section-heading {
+    color: black;
+    text-decoration: none;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: bold;
+}
+
+a.section-heading:hover {
+    text-decoration: underline;
+}
+
+.idea-cards, .bid-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.idea-card, .bid-card {
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center; /* Center text horizontally */
+}
+
+.idea-card img, .bid-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    margin-bottom: 10px; /* Adds space between the image and text */
+}
+
+.idea-card h3, .bid-card h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 10px; /* Adds space below the heading */
+}
+
+.idea-meta, .bid-buttons {
+    margin-top: 10px;
+}
+
+.view-details-btn, .bid-button {
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    margin-top: 10%;
+    padding: 8px 16px;
+    border-radius: 5px;
+}
+
+.view-details-btn:hover, .bid-button:hover {
+    background-color: #45a049;
+}

@@ -1,0 +1,44 @@
+{% load static %}
+
+<div class="sidebar">
+    <div class="profile-section">
+        {% if user.profile_picture %}
+        <img src="{{ user.profile_picture.url }}" alt="User Photo" class="profile-pic">
+        {% else %}
+        <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic">
+        {% endif %}
+        <h2>{{ user.get_full_name }}</h2>
+
+    </div>
+    <br><br>
+
+    <h4>Trending Skills</h4>
+    <ul>
+        {% for skill in user.trending_skills.all %}
+        <li>#{{ skill }}</li>
+        {% empty %}
+        <li>No skills to display</li>
+        {% endfor %}
+    </ul>
+    <br>
+
+    <h4>
+        <a href="profileanalysis.html" style="text-decoration: none; color: inherit;">Profile Analysis</a>
+    </h4>
+    <br>
+
+    <h4>
+        <a href="core.html" style="text-decoration: none; color: inherit;">CORE</a>
+    </h4>
+    
+    <h4>
+        <a href="{% url 'ideasandinvest' %}" style="text-decoration: none; color: inherit;">Ideas & Invest</a>
+    </h4>
+    
+    <h4>
+        <a href="assessment.html" style="text-decoration: none; color: inherit;">Assessments</a>
+    </h4>
+    <h4>
+        <a href="{% url 'faq' %}" style="text-decoration: none; color: inherit;">FAQ'S</a>
+    </h4>
+</div>

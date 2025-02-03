@@ -1,0 +1,21 @@
+{% extends 'findnewtalent.html' %}
+
+{% block content %}
+<h2>Upload Resume & Create Profile</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="candidate_name">Full Name</label>
+        <input type="text" class="form-control" id="candidate_name" name="candidate_name" required>
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+        <label for="uploaded_file">Upload Resume</label>
+        <input type="file" class="form-control-file" id="uploaded_file" name="uploaded_file" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Upload Resume</button>
+</form>
+{% endblock %}

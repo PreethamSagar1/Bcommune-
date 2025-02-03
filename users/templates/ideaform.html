@@ -1,0 +1,241 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post an Idea</title>
+    <link rel="stylesheet" href="{% static 'css/common.css'%}">
+</head>
+<body>
+
+    <style>
+        /* common.css */
+
+h2 {
+    color: #34495e;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+p {
+    color: #7f8c8d;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    line-height: 1.6;
+}
+
+form {
+    margin-top: 20px;
+}
+
+form .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    gap: 20px;
+}
+
+form .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+form input,
+form textarea,
+form select {
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+form input[type="file"] {
+    padding: 0;
+    border: none;
+}
+
+form .submit-btn {
+    background-color: #1a2734;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+form .submit-btn:hover {
+    background-color: #3498db;
+}
+
+#successMessage {
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+    }
+}
+
+    </style>
+
+    {% include 'header1.html' %}
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        {% include 'sidebar.html' %}
+
+        <!-- Right Content -->
+        <div class="content">
+            <h2>Post an Idea</h2>
+            <p>Bcommune Post Idea Initiative empowers you to bring your visions to life by connecting you with the right resources.</p>
+
+            <!-- Form Start -->
+            <form id="ideaForm" method="POST" enctype="multipart/form-data" class="idea-form">
+                {% csrf_token %}
+                <!-- Top Section -->
+                <input type="hidden" name="user_email" value="{{ user.email }}">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" name="title" placeholder="Enter your idea title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="patent">Patent Number</label>
+                        <input type="text" id="patent" name="patent_number" placeholder="Already had a patent?">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="brief">Brief Description</label>
+                        <textarea id="brief" name="brief_description" placeholder="Provide a brief description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="application">Patent Application Number</label>
+                        <input type="text" id="application" name="application_number" placeholder="Applied for a patent?">
+                    </div>
+                </div>
+
+                <!-- Middle Section -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="problem">Problem Statement</label>
+                        <textarea id="problem" name="problem_statement" placeholder="Describe the problem" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="solution">Solution</label>
+                        <textarea id="solution" name="solution" placeholder="Explain your solution" required></textarea>
+                    </div>
+                </div>
+
+                <!-- Bottom Section -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="visibility">Visibility</label>
+                        <select id="visibility" name="visibility">
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="details">Other Details (if any)</label>
+                        <input type="text" id="details" name="details" placeholder="Any additional information">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fund">Required Fund</label>
+                        <input type="number" id="fund" name="fund" placeholder="Enter amount">
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Idea Category</label>
+                        <input type="text" id="category" name="category" placeholder="Enter category">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="upload-photo">Upload Photo</label>
+                        <input type="file" id="upload-photo" name="photo" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label for="upload-video">Upload Video</label>
+                        <input type="file" id="upload-video" name="video" accept="video/*">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="team">Team Information and Expertise</label>
+                        <textarea id="team" name="team_info" placeholder="Provide team details"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Post Idea</button>
+            </form>
+            <!-- Placeholder for Success Message -->
+                        <div id="successMessage" style="display: none; color: green;">
+                            Idea submitted successfully!
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    function getCSRFToken() {
+                const name = 'csrftoken';
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        return cookie.substring(name.length + 1);
+                    }
+                }
+                return null;
+            }
+
+        document.getElementById('ideaForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            const formData = new FormData(this);
+    
+            fetch('/submit_idea/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                },
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('successMessage').style.display = 'block';
+                    this.reset(); // Clear the form
+                } else {
+                    alert('Failed to submit the idea. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>

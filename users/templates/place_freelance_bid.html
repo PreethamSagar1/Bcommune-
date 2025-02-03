@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Freelance Bid</title>
+</head>
+<body>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a2734;
+            margin: 0;
+            padding: 20px;
+            color: #2c3e50;
+        }
+    
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+    
+        .card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+    
+        .card-header {
+            background-color: #1a2734;
+            color: #fff;
+            padding: 15px 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+        }
+    
+        .card-body {
+            padding: 20px;
+        }
+    
+        .form-group {
+            margin-bottom: 15px;
+        }
+    
+        .form-group label {
+            font-weight: bold;
+            color: #34495e;
+            display: block;
+            margin-bottom: 5px;
+        }
+    
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+    
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+    
+        .form-group small {
+            display: block;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+    
+        .text-danger {
+            color: #e74c3c;
+            font-size: 0.875em;
+            margin-top: 5px;
+        }
+    
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 14px;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+    
+        .btn-primary {
+            background-color: #1a2734;
+            color: #fff;
+        }
+    
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+    
+        .btn-secondary {
+            background-color: #7f8c8d;
+            color: #fff;
+        }
+    
+        .btn-secondary:hover {
+            background-color: #5c6770;
+        }
+    
+        .project-summary {
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+    
+        .project-summary h5 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 1.2em;
+        }
+    
+        .project-summary p {
+            margin: 5px 0;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    
+        @media (max-width: 768px) {
+            .card {
+                margin: 10px;
+            }
+    
+            .card-header {
+                font-size: 1.2em;
+            }
+    
+            .btn {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+        }
+    </style>    
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Place Bid for {{ project.title }}</h2>
+                </div>
+                <div class="card-body">
+                    <div class="project-summary mb-4">
+                        <h5>Project Details</h5>
+                        <p><strong>Budget:</strong> ${{ project.budget }}</p>
+                        <p><strong>Duration:</strong> {{ project.duration }}</p>
+                        <p><strong>Skills Required:</strong> {{ project.skills_required }}</p>
+                    </div>
+                    <br>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.name.id_for_label }}">Full Name</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger">{{ form.name.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="{{ form.email.id_for_label }}">Email Address</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="{{ form.phone.id_for_label }}">Phone Number</label>
+                            {{ form.phone }}
+                            {% if form.phone.errors %}
+                                <div class="text-danger">{{ form.phone.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="{{ form.portfolio_links.id_for_label }}">Portfolio Links</label>
+                            {{ form.portfolio_links }}
+                            <small class="text-muted">Add your portfolio links (one per line)</small>
+                            {% if form.portfolio_links.errors %}
+                                <div class="text-danger">{{ form.portfolio_links.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="{{ form.previous_works.id_for_label }}">Previous Works</label>
+                            {{ form.previous_works }}
+                            {% if form.previous_works.errors %}
+                                <div class="text-danger">{{ form.previous_works.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="{{ form.expected_pay.id_for_label }}">Expected Pay ($)</label>
+                            {{ form.expected_pay }}
+                            {% if form.expected_pay.errors %}
+                                <div class="text-danger">{{ form.expected_pay.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="{{ form.timeline.id_for_label }}">Timeline</label>
+                            {{ form.timeline }}
+                            {% if form.timeline.errors %}
+                                <div class="text-danger">{{ form.timeline.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="{{ form.execution_plan.id_for_label }}">How will you execute this project?</label>
+                            {{ form.execution_plan }}
+                            {% if form.execution_plan.errors %}
+                                <div class="text-danger">{{ form.execution_plan.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Submit Bid</button>
+                            <a href="{% url 'all_freelance_projects' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bcommune Login</title>
+    <link rel="stylesheet" href="{% static 'css/log.css' %}">
+    <style>
+        /* General Styles */
+        * html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between; /* Ensure they are side by side */
+            gap: 50px; /* Adjust the gap between the two sections */
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        footer {
+            background-color: #1a2734;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            margin-top: auto; /* Pushes footer to the bottom */
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        footer a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #1a2734;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .logo img {
+            height: 50px;
+        }
+
+        .navbar nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 16px;
+        }
+
+        .navbar nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Right Column */
+        .right-column {
+            text-align: center;
+            flex: 1; /* Allow it to take up available space */
+            padding: 20px;
+            max-width: 50%; /* Limit its max width */
+        }
+
+        .right-column h1 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 20px;
+            font-family: 'Cambria', serif;
+        }
+
+        .learn-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .learn-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Login Box */
+        .login-box {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-box h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 20px;
+            color: #007bff;
+        }
+
+        .login-box label {
+            display: block;
+            margin: 10px 0 5px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .login-box .forgot {
+            font-size: 13px;
+            color: #007bff;
+            text-decoration: none;
+            text-align: right;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .login-box button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-box button:hover {
+            background-color: #0056b3;
+        }
+
+        .social-login {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .social-login span {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .social-icons img {
+            width: 40px;
+            margin: 5px 10px;
+            cursor: pointer;
+        }
+
+        .signup {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .signup a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .signup a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .container {
+                flex-direction: column; /* Stack them vertically on smaller screens */
+                align-items: center;
+            }
+
+            .right-column,
+            .login-box {
+                max-width: 100%; /* Ensure both sections take full width on small screens */
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar .logo img {
+                height: 40px;
+            }
+
+            .container {
+                padding: 20px;
+                gap: 20px;
+            }
+
+            .right-column h1 {
+                font-size: 18px;
+            }
+
+            .learn-btn {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header/Navbar -->
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <img src="{% static 'images/Bcommune_logo.png' %}" alt="Bcommune Logo">
+            </div>
+            <nav>
+                <a href="#">About Us</a>
+                <a href="#">Contact Us</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Content Section -->
+    <div class="container">
+        <!-- Right Column -->
+        <div class="right-column">
+            <h1>Empowering Growth, Unlocking Careers!</h1>
+            <h1>Expert consulting services to boost growth and profitability.</h1>
+            <button class="learn-btn">Learn more</button>
+        </div>
+
+        <!-- Login Box -->
+        <div class="login-box">
+            <h3>Login as Individual</h3>
+            <form method="post" action="{% url 'individual_login' %}" id="signin-form">
+                {% csrf_token %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter Email" required>
+            
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter Password" required>
+            
+                <a href="#" class="forgot">Forgot password?</a>
+                <button type="submit">LOGIN</button>
+            
+                <div class="social-login">
+                    <span>or</span>
+                    <div class="social-icons">
+                        <img src="{% static 'images/google.png' %}" alt="Google">
+                    </div>
+                </div>
+            
+                <div class="signup">
+                    Not yet registered? <a href="{% url 'individual_signup' %}">Sign Up</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>All rights reserved @Bcommune 2024</p>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+    </footer>
+
+    <script>
+        document.getElementById("signin-form").addEventListener("submit", function(event) {
+            const email = document.getElementById("email").value; // Corrected field ID
+            const password = document.getElementById("password").value;
+    
+            if (!email || !password) {
+                event.preventDefault(); // Block form submission if validation fails
+                alert("Please fill in all the fields!");
+            }
+        });
+    </script>
+    
+</body>
+</html>

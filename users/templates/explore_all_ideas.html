@@ -1,0 +1,117 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Ideas - Bcommune</title>
+    <link rel="stylesheet" href="{% static 'css/common.css'%}">
+</head>
+<body>
+
+    <style>
+        
+        .idea-cards, .bid-cards, .top-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* Common Card Styles */
+        .idea-card, .bid-card, .top-card {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .idea-card:hover, .bid-card:hover, .top-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Card Header */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #1a2734;
+            color: white;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .card-header img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        /* Card Body */
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-body img {
+            display: block;
+            margin: 0 auto 15px;
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .card-body p {
+            margin: 5px 0;
+            color: #555;
+            font-size: 14px;
+        }
+
+    </style>
+    {% include 'header2.html' %}
+
+    <div class="main-container">
+
+        {% include 'sidebarcompany.html' %}
+
+        <div class="content">
+            
+                <h1>Explore All Ideas</h1>
+                <br>
+
+                <div class="idea-cards">
+                    {% for idea in ideas %}
+                        <div class="idea-card">
+                            <div class="card-header">
+                                <h3>{{ idea.title }}</h3>
+                                <img src="{% static 'images/B.png' %}" alt="Logo">
+                            </div>
+                            <div class="card-body">
+                                {% if idea.photo %}
+                                    <img src="{{ idea.photo.url }}" alt="{{ idea.title }}">
+                                {% endif %}
+                                <p>{{ idea.brief_description|truncatechars:100 }}</p>
+                                <div class="idea-meta">
+                                    <p><strong>Category:</strong> {{ idea.category }}</p>
+                                    <p><strong>Fund:</strong> ${{ idea.fund }}</p>
+                                </div>
+                                <div class="view-details-btn">
+                                    <a href="{% url 'idea_detail' idea.id %}" class="bid-button">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No ideas available to display.</p>
+                    {% endfor %}
+                </div>
+            </div>
+    </div>
+</body>
+</html>

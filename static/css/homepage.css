@@ -1,0 +1,304 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #1a2734;
+    color: #333;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+header {
+    background-color: #1a2734;
+    padding: 15px 5%;
+    color: white;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.navbar .logo img {
+    height: 60px;
+    width: auto;
+}
+
+.navbar nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 1rem;
+}
+
+.navbar nav a:hover {
+    text-decoration: underline;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    font-size: 0.9rem;
+    max-width: 400px;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: white;
+    padding: 20px;
+    width: 250px;
+    min-height: calc(100vh - 30px); /* Adjusting for header height and margin */
+    margin-right: 0.2cm; /* Adds a gap of 0.5 cm */
+    border-radius: 40px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.profile-pic {
+    width: 190px;
+    height: 200px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    object-fit: cover;
+}
+
+.sidebar h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.sidebar h4 {
+    margin: 20px 0 10px;
+    font-size: 1rem;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 10px 0;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.sidebar ul li:hover {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+/* Main Container */
+.main-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: auto;
+    background-color: #1a2734;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-width: 1300px;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Content Section */
+.content {
+    flex: 1;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 40px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-right: 20px;
+}
+
+.content h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.top-picks {
+    margin-bottom: 30px;
+}
+
+.top-card .top-logo {
+    height: 70px;
+}
+
+/* Referral Program */
+.referral-program {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+#get-referred {
+    background-color: #1a2734;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#get-referred:hover {
+    background-color: #45a049;
+}
+
+.top-button {
+    padding: 10px 20px;
+    background-color: #0a2746;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.top-button:hover,
+.bid-button:hover {
+    background-color: #10aa3e;
+}
+
+.top-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    justify-content: space-between;
+}
+
+.top-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers content vertically */
+    align-items: center; /* Centers content horizontally */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    text-align: center;
+    width: 100%;
+    max-width: 200px;
+    height: 250px; /* Adjust card height for better alignment */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bid-buttons {
+    margin-top: auto; /* Push the button to the bottom of the card */
+    margin-bottom: 20px; /* Optional: Space between button and card's bottom edge */
+}
+
+.bid-button {
+    padding: 10px 50px;
+    background-color: #0a2746;
+    color: white;
+    text-decoration: none; /* Remove the underline */
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bid-button:hover {
+    background-color: #24b521;
+}
+
+.headings {
+    text-decoration: none;
+    color: inherit;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.headings:hover {
+    color: rgb(49, 49, 52); /* Change this to your desired hover color */
+    text-decoration: underline;
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .main-container {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .content {
+        margin-right: 0;
+    }
+
+    .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .top-cards {
+        justify-content: center;
+    }
+
+    .top-card {
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .search-bar input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar nav a {
+        font-size: 0.8rem;
+        margin-left: 10px;
+    }
+
+    .sidebar {
+        padding: 10px;
+        width: 100%;
+    }
+
+    .top-card {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .bid-button {
+        padding: 8px 30px;
+    }
+}

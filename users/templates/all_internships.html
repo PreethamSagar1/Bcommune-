@@ -1,0 +1,262 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Internships</title>
+    {% csrf_token %}
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <style>
+        /* CSS Styles as in the previous code */
+        .container {
+            display: flex;
+            margin: 20px;
+            gap: 20px;
+        }
+        .left-container {
+            flex: 1;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .right-container {
+            flex: 2;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .internship-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .internship-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        .internship-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .internship-company {
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .internship-location {
+            color: #007bff;
+            font-size: 14px;
+        }
+        .internship-details {
+            display: none;
+        }
+        .internship-details.active {
+            display: block;
+        }
+        .detail-header {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .detail-section {
+            margin-bottom: 15px;
+        }
+        .detail-section h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .internship-card.selected {
+            background-color: #f0f7ff;
+            border-left: 4px solid #007bff;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        .edit-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        .edit-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+
+    {% include 'header2.html' %}
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        {% include 'sidebarcompany.html' %}
+
+        <!-- Main Content -->
+        <div class="content">    
+    <div class="container">
+        <!-- Left Container -->
+        <div class="left-container">
+            {% for internship in internships %}
+                <div class="internship-card" onclick="showInternshipDetails('{{ internship.id }}')">
+                    <div class="internship-title">{{ internship.title }}</div>
+                    <div class="internship-company">{{ internship.company }}</div>
+                    <div class="internship-location">📍 {{ internship.location }}</div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Right Container -->
+        <div class="right-container">
+            {% for internship in internships %}
+                <div id="internship-details-{{ internship.id }}" class="internship-details">
+                    <div class="detail-header">
+                        <h2>{{ internship.title }}</h2>
+                        <p>{{ internship.company }}</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>Location</h3>
+                        <p>📍 {{ internship.location }}</p>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Stipend</h3>
+                        <p>💰 {{ internship.stipend }}</p>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Requirements</h3>
+                        <p>{{ internship.requirements }}</p>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Description</h3>
+                        <p>{{ internship.description }}</p>
+                    </div>
+
+                    <div class="detail-section">
+                        <p>Posted on: {{ internship.posted_date|date:"M d, Y" }}</p>
+                    </div>
+
+                    <div class="action-buttons">
+                        <a href="{% url 'edit_internship' internship.id %}" class="action-btn edit-btn">
+                            Edit Internship
+                        </a>
+                        <a href="#" class="action-btn delete-btn" onclick="confirmDelete('{{ internship.id }}'); return false;">
+                            Delete Internship
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+</div>
+
+    <script>
+        function showInternshipDetails(internshipId) {
+            document.querySelectorAll('.internship-details').forEach(detail => {
+                detail.classList.remove('active');
+            });
+    
+            const selectedInternship = document.getElementById(`internship-details-${internshipId}`);
+            if (selectedInternship) {
+                selectedInternship.classList.add('active');
+            }
+    
+            document.querySelectorAll('.internship-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            const selectedCard = document.querySelector(`.internship-card[onclick*="${internshipId}"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+        }
+    
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedInternshipId = urlParams.get('internship_id');
+            
+            if (selectedInternshipId) {
+                showInternshipDetails(selectedInternshipId);
+            } else {
+                const firstInternship = document.querySelector('.internship-details');
+                if (firstInternship) {
+                    firstInternship.classList.add('active');
+                }
+            }
+        }
+       
+        function confirmDelete(internshipId) {
+            if (confirm("Are you sure you want to delete this internship?")) {
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                
+                fetch(`/delete_internship/${internshipId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const internshipCard = document.querySelector(`.internship-card[onclick*="${internshipId}"]`);
+                        const internshipDetails = document.getElementById(`internship-details-${internshipId}`);
+                        
+                        if (internshipCard) internshipCard.remove();
+                        if (internshipDetails) internshipDetails.remove();
+                        
+                        const firstInternship = document.querySelector('.internship-details');
+                        if (firstInternship) {
+                            firstInternship.classList.add('active');
+                        }
+                        
+                        alert('Internship deleted successfully.');
+                    } else {
+                        alert('Failed to delete the internship. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

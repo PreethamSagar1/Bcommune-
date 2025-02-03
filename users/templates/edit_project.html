@@ -1,0 +1,235 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Project</title>
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+</head>
+<body>
+
+<style>
+
+/* Form Styles */
+.edit-project-form h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+/* Form Actions */
+.form-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.save-button,
+.cancel-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.save-button {
+    background-color: #1abc9c;
+    color: #fff;
+}
+
+.save-button:hover {
+    background-color: #16a085;
+}
+
+.cancel-button {
+    background-color: #e74c3c;
+    color: #fff;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.cancel-button:hover {
+    background-color: #c0392b;
+}
+
+/* Alerts */
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.alert-success {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+
+.alert-error {
+    background-color: #f2dede;
+    color: #a94442;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+
+    .edit-project-form {
+        padding: 10px;
+    }
+}
+
+    </style>
+    {% include 'header2.html' %}
+    <div class="main-container">
+        {% include 'sidebarcompany.html' %}
+        
+        <div class="content">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <section class="edit-project-form">
+                <h2>Edit Project</h2>
+                <form method="POST" action="{% url 'edit_project' project.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title">Project Title</label>
+                        <input type="text" id="title" name="title" value="{{ project.title }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Project Description</label>
+                        <textarea id="description" name="description" required>{{ project.description }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="type">Project Type</label>
+                        <input type="text" id="type" name="type" value="{{ project.project_type }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" name="industry" value="{{ project.industry }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="budget">Budget ($)</label>
+                        <input type="number" id="budget" name="budget" value="{{ project.budget }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timeline">Timeline</label>
+                        <input type="date" id="timeline" name="timeline" value="{{ project.timeline|date:'Y-m-d' }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" value="{{ project.location }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expertise">Required Expertise</label>
+                        <textarea id="expertise" name="expertise" required>{{ project.expertise_required }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="payment-terms">Payment Terms</label>
+                        <textarea id="payment-terms" name="payment-terms" required>{{ project.payment_terms }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Additional Requirements:</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="nda" name="nda_required" {% if project.nda_required %}checked{% endif %}>
+                            <label for="nda">NDA Required</label>
+                            
+                            <input type="checkbox" id="confidentiality" name="confidentiality_required" {% if project.confidentiality_required %}checked{% endif %}>
+                            <label for="confidentiality">Confidentiality Required</label>
+                            
+                            <input type="checkbox" id="ip_rights" name="ip_rights_required" {% if project.ip_rights_required %}checked{% endif %}>
+                            <label for="ip_rights">IP Rights Required</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="custom_field">Custom Field</label>
+                        <input type="text" id="custom_field" name="custom_field" value="{{ project.custom_field }}">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="save-button">Save Changes</button>
+                        <a href="{% url 'myprojects' %}" class="cancel-button">Cancel</a>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        function includeHTML() {
+            const elements = document.querySelectorAll("[include-html]");
+            elements.forEach((element) => {
+                const file = element.getAttribute("include-html");
+                if (file) {
+                    fetch(file)
+                        .then((response) => {
+                            if (response.ok) return response.text();
+                            throw new Error("Page not found");
+                        })
+                        .then((data) => {
+                            element.innerHTML = data;
+                            element.removeAttribute("include-html");
+                            includeHTML();
+                        })
+                        .catch((error) => console.error(error));
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", includeHTML);
+    </script>
+</body>
+</html>

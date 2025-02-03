@@ -1,0 +1,96 @@
+
+h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.job-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.job-card {
+    background-color: #b3afaf;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 300px;
+}
+
+.job-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.job-card .card-header img {
+    max-width: 60px;
+    height: auto;
+}
+
+.job-card .card-body p {
+    margin: 5px 0;
+}
+
+.job-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.job-actions .edit-button, 
+.job-actions .delete-button {
+    padding: 8px 20px;
+    background-color: #0a2746;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.job-actions .delete-button {
+    background-color: #f44336;
+}
+
+.job-actions .edit-button:hover {
+    background-color: #1a2746;
+}
+
+.job-actions .delete-button:hover {
+    background-color: #d32f2f;
+}
+
+/* No Jobs Message */
+.no-jobs {
+    color: #777;
+    font-size: 1.2rem;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .content {
+        margin-right: 0;
+    }
+
+    .job-card {
+        width: 100%;
+        max-width: 100%;
+    }
+}

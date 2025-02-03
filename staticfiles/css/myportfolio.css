@@ -1,0 +1,129 @@
+/* Main container layout */
+.main-container {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.content {
+    flex: 1;
+}
+
+/* Portfolio jobs section */
+.portfolio-jobs h2 {
+    margin-bottom: 2rem;
+    color: #333;
+    font-size: 1.8rem;
+}
+
+/* Job cards styling */
+.job-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.job-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: transform 0.2s ease;
+}
+
+.job-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Card header styling */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.header-content {
+    flex: 1;
+}
+
+.header-image {
+    width: 50px;
+    height: 50px;
+    margin-left: 1rem;
+}
+
+.job-card h3 {
+    color: #2c3e50;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+}
+
+.company {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Card body styling */
+.card-body {
+    margin: 1rem 0;
+}
+
+.location, .salary {
+    color: #555;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.requirements {
+    margin-top: 1rem;
+}
+
+.requirements h4 {
+    color: #2c3e50;
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+}
+
+.requirements p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Posted date styling */
+.posted-date {
+    color: #888;
+    font-size: 0.8rem;
+    margin: 1rem 0 0 0;
+    text-align: right;
+}
+
+/* No jobs message */
+.no-jobs {
+    text-align: center;
+    color: #666;
+    padding: 2rem;
+    font-size: 1.1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .job-cards-container {
+        grid-template-columns: 1fr;
+    }
+
+    .job-card {
+        padding: 1rem;
+    }
+}

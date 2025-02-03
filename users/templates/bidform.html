@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Your Bid</title>
+    <style>
+        .container {
+            max-width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .help-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            animation: fadeOut 0.5s ease 4.5s forwards;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .btn-submit {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        .file-upload {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        .custom-fields-container {
+            margin-top: 20px;
+        }
+
+        .add-custom-field {
+            background-color: #28a745;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if messages %}
+        <div id="alerts">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <h1>Submit Your Bid for {{ project.title }}</h1>
+        
+        <form action="{% url 'place_project_bid' project.id %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div>
+                <h2>Pricing and Timeline</h2>
+                <div>
+                    <label for="{{ form.amount.id_for_label }}">Proposed Price</label>
+                    {{ form.amount }}
+                    {% if form.amount.errors %}
+                        <div>{{ form.amount.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.payment_terms.id_for_label }}">Payment Terms</label>
+                    {{ form.payment_terms }}
+                    <p>Specify your proposed payment schedule and terms</p>
+                </div>
+
+                <div>
+                    <label for="{{ form.estimated_timeline.id_for_label }}">Estimated Timeline (Days)</label>
+                    {{ form.estimated_timeline }}
+                </div>
+
+                <div>
+                    <label for="{{ form.preferred_start_date.id_for_label }}">Preferred Start Date</label>
+                    {{ form.preferred_start_date }}
+                </div>
+            </div>
+
+            <div>
+                <h2>Project Approach and Team</h2>
+                <div>
+                    <label for="{{ form.project_approach.id_for_label }}">Project Approach</label>
+                    {{ form.project_approach }}
+                    <p>Describe your methodology and approach to completing this project</p>
+                </div>
+
+                <div>
+                    <label for="{{ form.team_resources.id_for_label }}">Team and Resources</label>
+                    {{ form.team_resources }}
+                    <p>Describe the team members and resources that will be allocated to this project</p>
+                </div>
+            </div>
+
+            <div>
+                <h2>Company Information</h2>
+                <div>
+                    <label for="{{ form.company_profile.id_for_label }}">Company Profile</label>
+                    {{ form.company_profile }}
+                </div>
+
+                <div>
+                    <label for="{{ form.portfolio_links.id_for_label }}">Portfolio/Previous Work</label>
+                    {{ form.portfolio_links }}
+                    <p>Provide links to relevant previous work or portfolio items</p>
+                </div>
+
+                <div>
+                    <label for="{{ form.client_testimonials.id_for_label }}">Client Testimonials/References</label>
+                    {{ form.client_testimonials }}
+                </div>
+            </div>
+
+            <div>
+                <h2>Documents and Additional Information</h2>
+                <div>
+                    <label for="{{ form.proposal_document.id_for_label }}">Proposal Document</label>
+                    {{ form.proposal_document }}
+                </div>
+
+                <div>
+                    <label for="{{ form.additional_details.id_for_label }}">Additional Details</label>
+                    {{ form.additional_details }}
+                </div>
+            </div>
+
+            <div>
+                <h2>Custom Fields</h2>
+                <div id="custom-fields-container">
+                    <!-- Custom fields will be added here dynamically -->
+                </div>
+                <button type="button" onclick="addCustomField()">Add Custom Field</button>
+            </div>
+
+            <div>
+                <button type="submit">Submit Bid</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Hide alerts after 5 seconds
+        setTimeout(() => {
+            const alerts = document.getElementById('alerts');
+            if (alerts) {
+                alerts.style.opacity = '0';
+                setTimeout(() => {
+                    alerts.style.display = 'none';
+                }, 500);
+            }
+        }, 5000);
+
+        // Custom fields functionality
+        function addCustomField() {
+            const container = document.getElementById('custom-fields-container');
+            const fieldDiv = document.createElement('div');
+            
+            const fieldCount = container.children.length;
+            
+            fieldDiv.innerHTML = `
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <input type="text" 
+                           name="custom_field_name_${fieldCount}" 
+                           placeholder="Field Name" 
+                           style="flex: 1;">
+                    <input type="text" 
+                           name="custom_field_value_${fieldCount}" 
+                           placeholder="Field Value" 
+                           style="flex: 2;">
+                    <button type="button" 
+                            onclick="this.parentElement.remove()" 
+                            style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                        Remove
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(fieldDiv);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <title>Edit Freelance Project</title>
+</head>
+<body>
+    {% include 'header2.html' %}
+    <div class="main-container">
+        {% include 'sidebarcompany.html' %}
+        <div class="content">
+            <h2>Edit Freelance Project</h2>
+            <form id="editFreelanceForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Project Title:</label>
+                    <input type="text" name="title" value="{{ project.title }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Category:</label>
+                    <input type="text" name="category" value="{{ project.category }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Description:</label>
+                    <textarea name="description" rows="5" required>{{ project.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Skills Required:</label>
+                    <input type="text" name="skills_required" value="{{ project.skills_required }}" placeholder="Comma-separated skills" required>
+                </div>
+                <div class="form-group">
+                    <label>Duration:</label>
+                    <input type="text" name="duration" value="{{ project.duration }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Budget:</label>
+                    <input type="text" name="budget" value="{{ project.budget }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Payment Terms:</label>
+                    <input type="text" name="payment_terms" value="{{ project.payment_terms }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Experience Level:</label>
+                    <input type="text" name="experience_level" value="{{ project.experience_level }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Location Preference:</label>
+                    <input type="text" name="location_preference" value="{{ project.location_preference }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Language Requirements:</label>
+                    <input type="text" name="language_requirements" value="{{ project.language_requirements }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Attachments:</label>
+                    <input type="file" name="attachments">
+                </div>
+                <div class="form-group">
+                    <label>Company Name:</label>
+                    <input type="text" name="company_name" value="{{ project.company_name }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Company Description:</label>
+                    <textarea name="company_description" rows="3" required>{{ project.company_description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Point of Contact Name:</label>
+                    <input type="text" name="point_of_contact_name" value="{{ project.point_of_contact_name }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Point of Contact Email:</label>
+                    <input type="email" name="point_of_contact_email" value="{{ project.point_of_contact_email }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Point of Contact Phone:</label>
+                    <input type="text" name="point_of_contact_phone" value="{{ project.point_of_contact_phone }}" required>
+                </div>
+                <button type="submit">Update Project</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('editFreelanceForm').onsubmit = function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch('/dashboard/edit-freelance/{{ project.id }}/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Freelance project updated successfully.');
+                    window.location.href = '{% url "freelance" %}';
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                alert('An error occurred while updating the freelance project.');
+            });
+        };
+    </script>
+</body>
+</html>

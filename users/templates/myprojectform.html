@@ -1,0 +1,187 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post a Project</title>
+    <link rel="stylesheet" href="{% static 'css/common.css'%}">
+</head>
+<body>
+
+    {% include 'header2.html' %}
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        {% include 'sidebarcompany.html' %}
+
+        <style>
+
+        .form-container {
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        .form-group input[type="checkbox"], .form-group input[type="radio"] {
+            width: auto;
+        }
+
+        .form-group .terms-label {
+            display: inline;
+            margin-left: 5px;
+        }
+
+        .post-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #1a2734;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .post-button:hover {
+            background-color: #45a049;
+        }
+        </style>
+
+        <!-- Main Content -->
+        <div class="content">
+            <h1>Outsource for a Project</h1>
+            <div class="form-container">
+                <form action="{% url 'post_project' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title">Project Title</label>
+                        <input type="text" id="title" name="title" placeholder="Enter project title..." required>
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="description">Project Description</label>
+                        <textarea id="description" name="description" placeholder="Enter project description..." required></textarea>
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="type">Project Type</label>
+                        <input type="text" id="type" name="type" placeholder="Enter project type..." required>
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" name="industry" placeholder="Enter industry..." required>
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="budget">Budget</label>
+                        <input type="number" id="budget" name="budget" placeholder="Enter budget..." required>
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="timeline">Timeline</label>
+                        <input type="date" id="timeline" name="timeline" required>
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="location">Location (if applicable)</label>
+                        <input type="text" id="location" name="location" placeholder="Enter location...">
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="expertise">Expertise Required</label>
+                        <textarea id="expertise" name="expertise" placeholder="Enter required expertise..." required></textarea>
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="payment-terms">Payment Terms</label>
+                        <textarea id="payment-terms" name="payment-terms" placeholder="Enter payment terms..." required></textarea>
+                    </div>
+        
+                    <div class="form-group">
+                        <label>Restrictions</label>
+                        <div>
+                            <input type="checkbox" id="nda" name="restrictions" value="NDA">
+                            <label for="nda">NDA</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="confidentiality" name="restrictions" value="Confidentiality Agreement">
+                            <label for="confidentiality">Confidentiality Agreement</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="ip-rights" name="restrictions" value="IP Rights">
+                            <label for="ip-rights">IP Rights</label>
+                        </div>
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="custom-field">Custom Field</label>
+                        <input type="text" id="custom-field" name="custom-field" placeholder="Add a custom field...">
+                    </div>
+        
+                    <button type="submit" class="post-button">Post</button>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            function includeHTML() {
+                const elements = document.querySelectorAll("[include-html]");
+                elements.forEach((element) => {
+                    const file = element.getAttribute("include-html");
+                    if (file) {
+                        fetch(file)
+                            .then((response) => {
+                                if (response.ok) return response.text();
+                                throw new Error("Page not found");
+                            })
+                            .then((data) => {
+                                element.innerHTML = data;
+                                element.removeAttribute("include-html");
+                                includeHTML(); // Recursive call to load nested includes if any
+                            })
+                            .catch((error) => console.error(error));
+                    }
+                });
+            }
+            document.addEventListener("DOMContentLoaded", includeHTML);
+        </script>
+
+</body>
+</html>

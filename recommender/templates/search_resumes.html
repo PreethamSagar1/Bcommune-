@@ -1,0 +1,31 @@
+{% extends 'findnewtalent.html' %}
+
+{% block content %}
+<h2>Search Resumes</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="search_query">Search Query</label>
+        <input type="text" class="form-control" id="search_query" name="search_query" required>
+    </div>
+    <div class="form-group">
+        <label for="match_count">Number of Recommendations</label>
+        <input type="number" class="form-control" id="match_count" name="match_count" min="1" max="20" value="5">
+    </div>
+    <button type="submit" class="btn btn-primary">Search Resumes</button>
+</form>
+
+{% if search_results %}
+    <h3 class="mt-4">Search Results</h3>
+    {% for resume in search_results %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ resume.candidate_name }}</h5>
+                <p class="card-text"><strong>Email:</strong> {{ resume.email }}</p>
+                <p class="card-text"><strong>Relevance Score:</strong> {{ resume.relevance_score|floatformat:2 }}</p>
+                <p class="card-text"><strong>Resume Excerpt:</strong> {{ resume.resume_text|truncatechars:500 }}</p>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+{% endblock %}

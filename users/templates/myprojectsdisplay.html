@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Available Projects</h1>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% for project in projects %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">{{ project.title }}</h2>
+                <p><strong>Industry:</strong> {{ project.industry }}</p>
+                <p><strong>Type:</strong> {{ project.project_type }}</p>
+                <p><strong>Budget:</strong> ${{ project.budget }}</p>
+                <p><strong>Timeline:</strong> {{ project.timeline }}</p>
+                <p><strong>Description:</strong> {{ project.description }}</p>
+                <p><strong>Required Expertise:</strong> {{ project.expertise_required }}</p>
+                {% if project.location %}
+                    <p><strong>Location:</strong> {{ project.location }}</p>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <p>No projects available at this time.</p>
+    {% endfor %}
+</div>
+{% endblock %}

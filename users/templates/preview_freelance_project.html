@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Preview Project</title>
+</head>
+<body>
+    <style>
+        /* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    max-width: 600px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+ul li {
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #34495e;
+}
+
+ul li strong {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Button Styles */
+button {
+    display: block;
+    background-color: #1a2734;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px auto;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #16a085;
+}
+
+a {
+    display: block;
+    text-align: center;
+    color: #3498db;
+    text-decoration: none;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+    </style>
+    <h1>Preview Your Project</h1>
+    <ul>
+        <li><strong>Title:</strong> {{ project_data.title }}</li>
+        <li><strong>Category:</strong> {{ project_data.category }}</li>
+        <li><strong>Description:</strong> {{ project_data.description }}</li>
+        <li><strong>Skills Required:</strong> {{ project_data.skills_required }}</li>
+        <li><strong>Duration:</strong> {{ project_data.duration }}</li>
+        <li><strong>Budget:</strong> {{ project_data.budget }}</li>
+        <li><strong>Payment Terms:</strong> {{ project_data.payment_terms }}</li>
+        <li><strong>Experience Level:</strong> {{ project_data.experience_level }}</li>
+        <li><strong>Location Preference:</strong> {{ project_data.location_preference }}</li>
+        <li><strong>Language Requirements:</strong> {{ project_data.language_requirements }}</li>
+        <li><strong>Attachments:</strong> {{ project_data.attachments }}</li>
+    </ul>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Submit Project</button>
+    </form>
+    <a href="{% url 'post_project' %}">Go Back</a>
+</body>
+</html>

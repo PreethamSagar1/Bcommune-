@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Get Job Recommendations</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="email">Enter your email to get job recommendations</label>
+        <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Recommend Jobs</button>
+</form>
+
+{% if recommended_jobs %}
+    <h3 class="mt-4">Recommended Jobs</h3>
+    {% for job in recommended_jobs %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ job.title }}</h5>
+                <p class="card-text"><strong>Description:</strong> {{ job.description }}</p>
+                <p class="card-text"><strong>Requirements:</strong> {{ job.requirements }}</p>
+                <p class="card-text"><strong>Relevance Score:</strong> {{ job.relevance_score|floatformat:2 }}</p>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+{% endblock %}

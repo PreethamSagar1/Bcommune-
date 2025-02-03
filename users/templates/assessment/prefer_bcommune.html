@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bcommune Assessments</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+    </style>
+    <script>
+        function validateForm(event) {
+            const totalQuestions = parseInt(document.getElementById("total_questions").value);
+            const aptitudeQuestions = parseInt(document.getElementById("aptitude_questions").value);
+            const codingQuestions = parseInt(document.getElementById("coding_questions").value);
+
+            if (isNaN(totalQuestions) || isNaN(aptitudeQuestions) || isNaN(codingQuestions)) {
+                event.preventDefault();
+                alert("Please fill out all fields with valid numbers.");
+                return false;
+            }
+
+            if (aptitudeQuestions + codingQuestions !== totalQuestions) {
+                event.preventDefault();
+                alert("The sum of aptitude and coding questions must equal the total number of questions.");
+                return false;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Use Bcommune Assessments</h1>
+    <form method="POST" action="/prefer_bcommune" onsubmit="validateForm(event)">
+        <label for="difficulty">Select Difficulty:</label>
+        <select id="difficulty" name="difficulty" required>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+
+        <label for="total_questions">Total Questions:</label>
+        <input type="number" id="total_questions" name="total_questions" required min="1">
+
+        <label for="aptitude_questions">Number of Aptitude Questions:</label>
+        <input type="number" id="aptitude_questions" name="aptitude_questions" required min="0">
+
+        <label for="coding_questions">Number of Coding Questions:</label>
+        <input type="number" id="coding_questions" name="coding_questions" required min="0">
+
+        <button type="submit">Generate Assessment</button>
+    </form>
+</body>
+</html>

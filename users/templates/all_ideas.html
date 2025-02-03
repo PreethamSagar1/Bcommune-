@@ -1,0 +1,260 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Ideas</title>
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <style>
+        .container {
+            display: flex;
+            margin: 20px;
+            gap: 20px;
+        }
+
+        .left-container {
+            flex: 1;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .right-container {
+            flex: 2;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .idea-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .idea-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .idea-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .idea-category {
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .idea-fund {
+            color: #007bff;
+            font-size: 14px;
+        }
+
+        .idea-details {
+            display: none;
+        }
+
+        .idea-details.active {
+            display: block;
+        }
+
+        .detail-header {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-section {
+            margin-bottom: 15px;
+        }
+
+        .detail-section h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .idea-card.selected {
+            background-color: #f0f7ff;
+            border-left: 4px solid #007bff;
+        }
+
+        .idea-tag {
+            display: inline-block;
+            background-color: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin: 2px;
+            font-size: 14px;
+        }
+
+        .media-section {
+            margin-top: 20px;
+        }
+
+        .media-section img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .media-section video {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    {% include 'header2.html' %}
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        {% include 'sidebarcompany.html' %}
+
+
+        <!-- Main Content -->
+        <div class="content">
+    <div class="container">
+        <!-- Left Container -->
+        <div class="left-container">
+            {% for idea in ideas %}
+                <div class="idea-card" onclick="showIdeaDetails('{{ idea.id }}')">
+                    <div class="idea-title">{{ idea.title }}</div>
+                    <div class="idea-category">{{ idea.category }}</div>
+                    {% if idea.fund %}
+                        <div class="idea-fund">💰 ${{ idea.fund }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Right Container -->
+        <div class="right-container">
+            {% for idea in ideas %}
+                <div id="idea-details-{{ idea.id }}" class="idea-details">
+                    <div class="detail-header">
+                        <h2>{{ idea.title }}</h2>
+                        <p>{{ idea.category }} - {{ idea.visibility|title }}</p>
+                    </div>
+                    
+                    {% if idea.patent_number %}
+                    <div class="detail-section">
+                        <h3>Patent Information</h3>
+                        <p>Patent Number: {{ idea.patent_number }}</p>
+                        {% if idea.application_number %}
+                            <p>Application Number: {{ idea.application_number }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="detail-section">
+                        <h3>Brief Description</h3>
+                        <p>{{ idea.brief_description }}</p>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Problem Statement</h3>
+                        <p>{{ idea.problem_statement }}</p>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Solution</h3>
+                        <p>{{ idea.solution }}</p>
+                    </div>
+
+                    {% if idea.details %}
+                    <div class="detail-section">
+                        <h3>Additional Details</h3>
+                        <p>{{ idea.details }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if idea.fund %}
+                    <div class="detail-section">
+                        <h3>Funding Required</h3>
+                        <p>💰 ${{ idea.fund }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if idea.team_info %}
+                    <div class="detail-section">
+                        <h3>Team Information</h3>
+                        <p>{{ idea.team_info }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="media-section">
+                        {% if idea.photo %}
+                            <img src="{{ idea.photo.url }}" alt="Idea Image">
+                        {% endif %}
+                        
+                        {% if idea.video %}
+                            <video controls>
+                                <source src="{{ idea.video.url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        {% endif %}
+                    </div>
+
+                    <div class="detail-section">
+                        <p>Posted on: {{ idea.created_at|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+</div>
+
+    <script>
+        function showIdeaDetails(ideaId) {
+            // Hide all idea details
+            document.querySelectorAll('.idea-details').forEach(detail => {
+                detail.classList.remove('active');
+            });
+    
+            // Show the selected idea details
+            const selectedIdea = document.getElementById(`idea-details-${ideaId}`);
+            if (selectedIdea) {
+                selectedIdea.classList.add('active');
+            }
+    
+            // Highlight the selected idea card
+            document.querySelectorAll('.idea-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            const selectedCard = document.querySelector(`.idea-card[onclick*="${ideaId}"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+        }
+    
+        // Show the first idea details by default, unless there's a selected idea
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedIdeaId = urlParams.get('idea_id');
+            
+            if (selectedIdeaId) {
+                showIdeaDetails(selectedIdeaId);
+            } else {
+                const firstIdea = document.querySelector('.idea-details');
+                if (firstIdea) {
+                    firstIdea.classList.add('active');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

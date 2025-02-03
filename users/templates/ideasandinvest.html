@@ -1,0 +1,35 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idea and Investment</title>
+    <link rel="stylesheet" href="{% static 'css/common.css'%}">
+</head>
+<body>
+
+    {% include 'header1.html' %}
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        {% include 'sidebar.html' %}
+
+        <!-- Main Content -->
+        <div class="content">
+                <div class="header-row">
+                    <h2>Idea & Investment</h2>
+                    <div class="post-requirement">
+                        <a href="{% url 'ideaform' %}" class="post-button">+ Post an Idea</a>
+                    </div>
+                </div>
+                <p>Innovate, Invest & Be the part of Future</p>
+        </div>
+    </div>
+
+    <script src="individualmyjobs.js"></script> <!-- JavaScript file for dynamic elements -->
+
+</body>
+</html>
